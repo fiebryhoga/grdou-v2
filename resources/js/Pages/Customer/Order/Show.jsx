@@ -1,120 +1,256 @@
-import { Head } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import GuestLayout from '@/Layouts/GuestLayout';
+import { 
+    FaCheckCircle, FaClock, FaBoxOpen, FaMapMarkerAlt, 
+    FaWhatsapp, FaArrowLeft, FaReceipt, FaCreditCard 
+} from 'react-icons/fa';
 
 export default function Show({ order, clientKey }) {
-    
+    const [isSnapLoaded, setIsSnapLoaded] = useState(false);
+
+    // Format Rupiah
+    const formatIDR = (price) => new Intl.NumberFormat('id-ID', { 
+        style: 'currency', 
+        currency: 'IDR', 
+        minimumFractionDigits: 0 
+    }).format(price);
+
+    // Format Tanggal
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+    };
+
+    // --- 1. LOAD SCRIPT MIDTRANS ---
     useEffect(() => {
         if (!clientKey) {
-            alert("FATAL ERROR: Client Key Midtrans kosong! Cek .env dan jalankan 'php artisan config:clear'");
+            console.error("Client Key Midtrans tidak ditemukan.");
             return;
         }
 
-        // --- LOGIC PENENTUAN URL ---
-        // Biasanya Sandbox pakai awalan SB-, tapi akun Anda unik.
-        // Kita paksa pakai URL Sandbox dulu karena settingan .env IS_PRODUCTION=false
-        const snapSrcUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-        
         const scriptId = 'midtrans-script';
-        let script = document.getElementById(scriptId);
+        const snapSrcUrl = "https://app.sandbox.midtrans.com/snap/snap.js"; // Ganti ke production URL jika sudah live
 
-        if (!script) {
-            script = document.createElement('script');
+        // Cek jika script sudah ada
+        if (!document.getElementById(scriptId)) {
+            const script = document.createElement('script');
             script.src = snapSrcUrl;
             script.id = scriptId;
             script.setAttribute('data-client-key', clientKey);
             script.async = true;
+            script.onload = () => setIsSnapLoaded(true);
             document.body.appendChild(script);
+        } else {
+            setIsSnapLoaded(true);
         }
-
-        return () => {
-            // Cleanup jika perlu
-        };
     }, [clientKey]);
 
+    // --- 2. HANDLER PEMBAYARAN ---
     const handlePayment = () => {
-        if (!order.snap_token) {
-            alert("Error: Snap Token belum tergenerate. Coba checkout ulang.");
+        if (!isSnapLoaded || !window.snap) {
+            alert("Sistem pembayaran sedang memuat, silakan tunggu sejenak...");
             return;
         }
 
-        if (window.snap) {
-            window.snap.pay(order.snap_token, {
-                onSuccess: function(result){
-                    alert("Pembayaran Berhasil!");
-                    window.location.reload();
-                },
-                onPending: function(result){
-                    alert("Menunggu pembayaran...");
-                },
-                onError: function(result){
-                    alert("Pembayaran gagal!");
-                    console.error(result);
-                },
-                onClose: function(){
-                    console.log('Popup ditutup');
-                }
-            });
-        } else {
-            alert("Script Midtrans belum dimuat dengan benar. Periksa koneksi internet atau Client Key.");
+        if (!order.snap_token) {
+            alert("Token pembayaran tidak valid. Silakan refresh halaman.");
+            return;
         }
+
+        window.snap.pay(order.snap_token, {
+            onSuccess: function(result) {
+                // Redirect atau Reload agar status terupdate di tampilan
+                router.visit(route('order.show', order.id));
+            },
+            onPending: function(result) {
+                alert("Menunggu pembayaran...");
+                router.reload();
+            },
+            onError: function(result) {
+                alert("Pembayaran gagal!");
+                console.error(result);
+            },
+            onClose: function() {
+                console.log('Popup ditutup tanpa pembayaran selesai');
+            }
+        });
     };
 
-    const formatIDR = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+    // --- TAMPILAN 1: JIKA SUDAH LUNAS (SUCCESS PAGE) ---
+    if (order.status === 'paid' || order.status === 'settlement') {
+        return (
+            <GuestLayout>
+                <Head title={`Lunas - #${order.order_number}`} />
+                <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                    <div className="bg-white max-w-lg w-full rounded-3xl shadow-xl p-8 text-center animate-fade-in-up">
+                        <div className="mb-6 flex justify-center">
+                            <div className="bg-green-100 p-4 rounded-full">
+                                <FaCheckCircle className="text-6xl text-green-600" />
+                            </div>
+                        </div>
+                        
+                        <h1 className="text-3xl font-bold text-slate-800 mb-2">Pembayaran Berhasil!</h1>
+                        <p className="text-slate-500 mb-8">
+                            Terima kasih, pesanan <strong>#{order.order_number}</strong> Anda sedang kami proses.
+                        </p>
 
-    return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
-            <Head title={`Order #${order.order_number}`} />
+                        <div className="bg-slate-50 rounded-xl p-6 border border-slate-100 mb-8 text-left">
+                            <div className="flex justify-between mb-2">
+                                <span className="text-slate-500">Tanggal Bayar</span>
+                                <span className="font-semibold">{formatDate(new Date())}</span>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-slate-500">Metode</span>
+                                <span className="font-semibold uppercase">{order.shipping_courier}</span>
+                            </div>
+                            <div className="flex justify-between pt-4 border-t border-slate-200">
+                                <span className="font-bold text-slate-800">Total Bayar</span>
+                                <span className="font-bold text-green-600">{formatIDR(order.total_price)}</span>
+                            </div>
+                        </div>
 
-            <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
-                {/* Header */}
-                <div className="bg-slate-900 text-white p-8 text-center">
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Total Tagihan</p>
-                    <h1 className="text-4xl font-extrabold">{formatIDR(order.total_price)}</h1>
-                    <div className="mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-white/10 border border-white/20">
-                        #{order.order_number}
+                        <div className="flex flex-col gap-3">
+                            <a 
+                                href={`https://wa.me/6281234567890?text=Halo admin, saya sudah bayar pesanan ${order.order_number}`} 
+                                target="_blank"
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
+                            >
+                                <FaWhatsapp size={20} /> Konfirmasi ke Admin
+                            </a>
+                            <Link 
+                                href={route('katalog.index')} 
+                                className="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-50 transition"
+                            >
+                                Kembali Belanja
+                            </Link>
+                        </div>
                     </div>
                 </div>
+            </GuestLayout>
+        );
+    }
 
-                {/* Content */}
-                <div className="p-8 space-y-6">
-                    <div className="text-center">
-                        <span className={`inline-block px-4 py-2 rounded-lg text-sm font-bold uppercase ${
-                            order.status === 'paid' ? 'bg-green-100 text-green-700' :
-                            order.status === 'pending' ? 'bg-orange-100 text-orange-700' :
-                            'bg-red-100 text-red-700'
-                        }`}>
-                            STATUS: {order.status}
-                        </span>
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-6">
-                        <p className="text-slate-500 text-xs font-bold uppercase mb-4">Detail Pelanggan</p>
-                        <p className="font-bold">{order.customer_name}</p>
-                        <p className="text-sm text-slate-500">{order.customer_email}</p>
-                    </div>
-                
-                    {/* Tombol Bayar */}
-                    {order.status === 'pending' && (
-                        <div className="pt-4">
-                            <button 
-                                onClick={handlePayment}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1"
-                            >
-                                BAYAR SEKARANG
-                            </button>
-                            <p className="text-[10px] text-slate-400 mt-2 text-center">
-                                Token: {order.snap_token ? order.snap_token.substring(0, 10) + '...' : 'Loading...'}
-                            </p>
-                        </div>
-                    )}
+    // --- TAMPILAN 2: JIKA BELUM BAYAR (PENDING PAGE) ---
+    return (
+        <GuestLayout>
+            <Head title={`Tagihan #${order.order_number}`} />
+            
+            <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
+                <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    {order.status === 'paid' && (
-                        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center text-green-700 font-bold text-sm">
-                            Pembayaran Lunas. Terima kasih!
+                    {/* KOLOM KIRI: Detail Order */}
+                    <div className="lg:col-span-2 space-y-6">
+                        
+                        {/* Header Status */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex justify-between items-center">
+                            <div>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Status Pesanan</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <FaClock className="text-orange-500" />
+                                    <span className="font-bold text-orange-600 text-lg uppercase">{order.status}</span>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-xs font-bold text-slate-400 uppercase">Order ID</p>
+                                <p className="font-mono font-bold text-slate-700">#{order.order_number}</p>
+                            </div>
                         </div>
-                    )}
+
+                        {/* Alamat Pengiriman */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                            <h3 className="flex items-center gap-2 font-bold text-slate-800 mb-4 pb-2 border-b">
+                                <FaMapMarkerAlt className="text-blue-600" /> Informasi Pengiriman
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6 text-sm">
+                                <div>
+                                    <p className="font-semibold text-slate-500 mb-1">Penerima</p>
+                                    <p className="font-bold text-slate-800">{order.customer_name}</p>
+                                    <p className="text-slate-600">{order.customer_phone}</p>
+                                    <p className="text-slate-600">{order.customer_email}</p>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-slate-500 mb-1">Alamat Tujuan</p>
+                                    <p className="text-slate-700 leading-relaxed">{order.shipping_address}</p>
+                                    <div className="mt-2 inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">
+                                        Kurir: {order.shipping_courier}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* List Barang */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                            <h3 className="flex items-center gap-2 font-bold text-slate-800 mb-4 pb-2 border-b">
+                                <FaBoxOpen className="text-blue-600" /> Rincian Item
+                            </h3>
+                            <div className="space-y-4">
+                                {order.items && order.items.map((item, index) => (
+                                    <div key={index} className="flex justify-between items-center">
+                                        <div>
+                                            <p className="font-bold text-slate-700">{item.product_name}</p>
+                                            <p className="text-xs text-slate-500">
+                                                {item.quantity} x {formatIDR(item.price)}
+                                            </p>
+                                        </div>
+                                        <p className="font-semibold text-slate-800">
+                                            {formatIDR(item.price * item.quantity)}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* KOLOM KANAN: Tagihan & Action */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden sticky top-6">
+                            <div className="bg-slate-900 p-6 text-center text-white">
+                                <p className="text-slate-400 text-xs font-bold uppercase mb-2">Total Tagihan</p>
+                                <h2 className="text-3xl font-extrabold">{formatIDR(order.total_price)}</h2>
+                            </div>
+                            
+                            <div className="p-6">
+                                <div className="text-center mb-6">
+                                    <p className="text-sm text-slate-500 mb-4">
+                                        Silakan selesaikan pembayaran untuk memproses pesanan Anda.
+                                    </p>
+                                    
+                                    {order.status === 'pending' ? (
+                                        <button 
+                                            onClick={handlePayment}
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2"
+                                        >
+                                            <FaCreditCard /> BAYAR SEKARANG
+                                        </button>
+                                    ) : (
+                                        <button disabled className="w-full bg-slate-200 text-slate-500 font-bold py-4 rounded-xl cursor-not-allowed">
+                                            {order.status === 'cancelled' ? 'PESANAN DIBATALKAN' : 'SUDAH DIBAYAR'}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="space-y-3">
+                                    <a 
+                                        href={`https://wa.me/6281234567890?text=Halo, saya butuh bantuan untuk order #${order.order_number}`}
+                                        target="_blank"
+                                        className="block w-full text-center py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm transition"
+                                    >
+                                        Bantuan via WhatsApp
+                                    </a>
+                                    <Link 
+                                        href={route('home')}
+                                        className="block w-full text-center py-3 text-slate-400 hover:text-blue-600 text-sm transition"
+                                    >
+                                        Kembali ke Beranda
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </div>
+        </GuestLayout>
     );
 }

@@ -1,203 +1,351 @@
 import React, { useEffect, useState } from 'react';
-// ... import lainnya (Head, useForm, GuestLayout, dll)
-import axios from 'axios'; // Pastikan install axios: npm install axios
+import { Head, useForm, usePage } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout'; 
+// IMPORT CONTEXT (PENTING)
+import { useCart } from '@/Contexts/CartContext'; 
+import { 
+    FaUser, FaPhone, FaEnvelope, FaMapMarkedAlt, 
+    FaTruck, FaStore, FaBoxOpen, FaCheckCircle, FaExclamationCircle
+} from 'react-icons/fa';
 
 export default function Checkout() {
-    const { cart, getTotalPrice } = useCart();
+    const { auth } = usePage().props; 
     
-    // --- STATE ONGKIR ---
-    const [provinces, setProvinces] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [shippingServices, setShippingServices] = useState([]); // Daftar layanan (REG, YES, OKE)
-    
-    // Pilihan User
-    const [selectedProv, setSelectedProv] = useState('');
-    const [selectedCity, setSelectedCity] = useState('');
-    const [selectedCourier, setSelectedCourier] = useState('');
-    const [selectedService, setSelectedService] = useState(null); // Objek layanan terpilih
+    // --- AMBIL DATA DARI CONTEXT (BUKAN PROPS) ---
+    const { cart } = useCart(); 
 
-    // Setup Form Inertia
+    // --- STATE LOGIC ---
+    const [deliveryType, setDeliveryType] = useState('shipping'); 
+
     const { data, setData, post, processing, errors } = useForm({
-        // ... data diri ...
-        customer_name: '',
-        customer_email: '',
+        // Data Diri
+        customer_name: auth.user ? auth.user.name : '',
+        customer_email: auth.user ? auth.user.email : '',
         customer_phone: '',
-        shipping_address: '',
         
-        // Data Ongkir yg dikirim ke Backend
+        // Alamat Manual
+        province: '',
+        city: '',
+        district: '', 
+        village: '', 
+        address_detail: '',
+        
+        // Meta Data
+        delivery_type: 'shipping', 
         shipping_cost: 0, 
-        shipping_courier: '',
-        shipping_service: '',
-        
-        items: [] 
+        items: cart // Inisialisasi awal (jika context sudah ready)
     });
 
-    // 1. Load Provinsi saat pertama kali buka
+    // SINKRONISASI: Setiap kali 'cart' berubah (dari Context/LocalStorage), update form data
+
     useEffect(() => {
-        axios.get('/api/ongkir/provinces').then(res => setProvinces(res.data));
-    }, []);
+        const formattedItems = cart.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            
+            // --- PERBAIKAN UTAMA DISINI ---
+            // Di Context React namanya 'item.variant' (singular)
+            // Di Controller Laravel kita memanggil '$item['variants']' (plural)
+            // Kita harus mapping agar namanya cocok:
+            variants: item.variant || {}, 
+            
+            // Pastikan file desain juga terkirim jika ada
+            design_files: item.designFiles || [] 
+        }));
 
-    // 2. Load Kota saat Provinsi dipilih
-    useEffect(() => {
-        if (selectedProv) {
-            axios.get(`/api/ongkir/cities/${selectedProv}`).then(res => setCities(res.data));
-        }
-    }, [selectedProv]);
+        setData('items', formattedItems);
+    }, [cart]);
 
-    // 3. Fungsi Cek Harga (Dipanggil saat tombol/dropdown kurir berubah)
-    const checkOngkir = (courierCode) => {
-        setSelectedCourier(courierCode);
-        if (!selectedCity || !courierCode) return;
-
-        // Hitung total berat (Default 250gram per item jika tidak ada data berat)
-        const totalWeight = cart.reduce((acc, item) => acc + (item.quantity * 250), 0);
-
-        axios.post('/api/ongkir/check', {
-            city_id: selectedCity,
-            weight: totalWeight, 
-            courier: courierCode
-        }).then(res => {
-            // RajaOngkir return array, ambil costs nya
-            setShippingServices(res.data[0].costs); 
-        });
-    };
-
-    // 4. Saat Layanan (Service) dipilih user
-    const handleServiceChange = (service) => {
-        const cost = service.cost[0].value; // Ambil harga
-        setSelectedService(service);
-        
-        // Masukkan ke Form Data agar tersimpan di DB
+    const handleMethodChange = (type) => {
+        setDeliveryType(type);
         setData(prev => ({
             ...prev,
-            shipping_cost: cost,
-            shipping_service: service.service,
-            shipping_courier: selectedCourier
+            delivery_type: type,
+            shipping_cost: 0 
         }));
     };
 
-    // Hitung Grand Total
-    const grandTotal = getTotalPrice() + (selectedService ? selectedService.cost[0].value : 0);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('checkout.process'));
+    };
 
-    // ... (useEffect mapping cart items sama seperti sebelumnya) ...
-    // ... (handleSubmit sama seperti sebelumnya) ...
+    // Hitung Total Harga Barang
+    const getTotalProductPrice = () => {
+        if (!cart || cart.length === 0) return 0;
+        return cart.reduce((acc, item) => {
+            // Pastikan harga & qty berupa angka (jaga-jaga error tipe data)
+            const price = parseFloat(item.finalPrice || item.price) || 0;
+            const qty = parseInt(item.quantity) || 0;
+            return acc + (price * qty);
+        }, 0);
+    };
+
+    // TAMPILAN JIKA KERANJANG KOSONG
+    // Pastikan cart benar-benar array sebelum di-cek length-nya
+    if (!Array.isArray(cart) || cart.length === 0) {
+        return (
+            <GuestLayout>
+                <Head title="Checkout Kosong" />
+                <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
+                    <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full">
+                        <FaExclamationCircle className="text-6xl text-gray-300 mb-4 mx-auto" />
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Keranjang Belanja Kosong</h2>
+                        <p className="text-gray-500 mb-6">Anda belum memilih produk apapun.</p>
+                        <a href={route('katalog.index')} className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition">
+                            Belanja Sekarang
+                        </a>
+                    </div>
+                </div>
+            </GuestLayout>
+        )
+    }
 
     return (
-        <GuestLayout title="Checkout">
-             {/* ... Header Checkout ... */}
-             
-             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                
-                {/* KOLOM KIRI */}
-                <div className="space-y-6">
-                    {/* ... Form Data Diri (Nama, Email, HP) ... */}
+        <GuestLayout>
+            <Head title="Checkout" />
 
-                    {/* --- AREA CEK ONGKIR --- */}
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h2 className="text-lg font-bold mb-4">Pengiriman</h2>
-                        <div className="space-y-4">
+            <div className="py-12 bg-gray-50 min-h-screen font-sans">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    {/* Header Sederhana */}
+                    <div className="mb-8 text-center">
+                        <h1 className="text-3xl font-extrabold text-gray-800">Selesaikan Pesanan</h1>
+                        <p className="text-gray-500 mt-2">Lengkapi data diri dan pilih metode pengiriman</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        {/* === KOLOM KIRI (FORM INPUT) === */}
+                        <div className="lg:col-span-2 space-y-6">
                             
-                            {/* Provinsi */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Provinsi</label>
-                                <select className="w-full rounded-xl border-slate-300" onChange={e => setSelectedProv(e.target.value)}>
-                                    <option value="">Pilih Provinsi</option>
-                                    {provinces.map(p => (
-                                        <option key={p.province_id} value={p.province_id}>{p.province}</option>
-                                    ))}
-                                </select>
-                            </div>
+                            {/* 1. DATA PEMESAN */}
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <div className="flex items-center gap-3 mb-6 border-b pb-4">
+                                    <div className="bg-blue-100 p-3 rounded-full text-blue-600">
+                                        <FaUser size={20} />
+                                    </div>
+                                    <h2 className="text-xl font-bold text-gray-800">Informasi Pemesan</h2>
+                                </div>
 
-                            {/* Kota */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Kota/Kabupaten</label>
-                                <select className="w-full rounded-xl border-slate-300" disabled={!selectedProv} onChange={e => setSelectedCity(e.target.value)}>
-                                    <option value="">Pilih Kota</option>
-                                    {cities.map(c => (
-                                        <option key={c.city_id} value={c.city_id}>{c.type} {c.city_name}</option>
-                                    ))}
-                                </select>
-                            </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+                                        <div className="relative">
+                                            <FaUser className="absolute left-3 top-3 text-gray-400" />
+                                            <input type="text" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                                placeholder="Nama sesuai KTP"
+                                                value={data.customer_name} onChange={e => setData('customer_name', e.target.value)} required />
+                                        </div>
+                                        {errors.customer_name && <p className="text-red-500 text-xs mt-1">{errors.customer_name}</p>}
+                                    </div>
 
-                            {/* Alamat Detail */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Alamat Lengkap</label>
-                                <textarea className="w-full rounded-xl border-slate-300" 
-                                    value={data.shipping_address} onChange={e => setData('shipping_address', e.target.value)} 
-                                    placeholder="Jalan, No Rumah, RT/RW..."></textarea>
-                            </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">No. WhatsApp</label>
+                                        <div className="relative">
+                                            <FaPhone className="absolute left-3 top-3 text-gray-400" />
+                                            <input type="text" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                                placeholder="08xxxxxxxxxx"
+                                                value={data.customer_phone} onChange={e => setData('customer_phone', e.target.value)} required />
+                                        </div>
+                                    </div>
 
-                            {/* Pilih Kurir */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Kurir</label>
-                                <select className="w-full rounded-xl border-slate-300" disabled={!selectedCity} onChange={e => checkOngkir(e.target.value)}>
-                                    <option value="">Pilih Kurir</option>
-                                    <option value="jne">JNE</option>
-                                    <option value="pos">POS Indonesia</option>
-                                    <option value="tiki">TIKI</option>
-                                </select>
-                            </div>
-
-                            {/* Hasil Cek Ongkir (Radio Button) */}
-                            {shippingServices.length > 0 && (
-                                <div className="mt-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <p className="text-sm font-bold mb-2">Pilih Layanan:</p>
-                                    <div className="space-y-2">
-                                        {shippingServices.map((srv, idx) => (
-                                            <label key={idx} className={`flex justify-between items-center p-3 border rounded-lg cursor-pointer hover:bg-white ${selectedService?.service === srv.service ? 'border-blue-500 bg-blue-50' : 'border-slate-300'}`}>
-                                                <div className="flex items-center gap-3">
-                                                    <input type="radio" name="service" 
-                                                        onChange={() => handleServiceChange(srv)} 
-                                                        checked={selectedService?.service === srv.service}
-                                                    />
-                                                    <div>
-                                                        <p className="font-bold text-sm">{srv.service}</p>
-                                                        <p className="text-xs text-slate-500">{srv.description} ({srv.cost[0].etd} Hari)</p>
-                                                    </div>
-                                                </div>
-                                                <span className="font-bold text-blue-700">Rp {srv.cost[0].value.toLocaleString('id-ID')}</span>
-                                            </label>
-                                        ))}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                                        <div className="relative">
+                                            <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
+                                            <input type="email" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                                placeholder="email@contoh.com"
+                                                value={data.customer_email} onChange={e => setData('customer_email', e.target.value)} required />
+                                        </div>
                                     </div>
                                 </div>
-                            )}
+                            </div>
+
+                            {/* 2. METODE & ALAMAT */}
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <div className="flex items-center gap-3 mb-6 border-b pb-4">
+                                    <div className="bg-orange-100 p-3 rounded-full text-orange-600">
+                                        <FaMapMarkedAlt size={20} />
+                                    </div>
+                                    <h2 className="text-xl font-bold text-gray-800">Pengiriman & Alamat</h2>
+                                </div>
+
+                                {/* Toggle Button Pilihan */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                                    {/* Opsi 1: Kirim Paket */}
+                                    <div 
+                                        onClick={() => handleMethodChange('shipping')}
+                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                                        ${deliveryType === 'shipping' 
+                                            ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
+                                            : 'border-gray-200 hover:border-blue-300'}`}>
+                                        <div className={`p-3 rounded-full ${deliveryType === 'shipping' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                            <FaTruck size={24} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-gray-800">Kirim Paket</h3>
+                                            <p className="text-xs text-gray-500">Ongkir Bayar Tujuan (COD)</p>
+                                        </div>
+                                        {deliveryType === 'shipping' && <FaCheckCircle className="ml-auto text-blue-600" size={20}/>}
+                                    </div>
+
+                                    {/* Opsi 2: Ambil Sendiri */}
+                                    <div 
+                                        onClick={() => handleMethodChange('pickup')}
+                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                                        ${deliveryType === 'pickup' 
+                                            ? 'border-green-600 bg-green-50 ring-1 ring-green-600' 
+                                            : 'border-gray-200 hover:border-green-300'}`}>
+                                        <div className={`p-3 rounded-full ${deliveryType === 'pickup' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                            <FaStore size={24} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-gray-800">Ambil Di Toko</h3>
+                                            <p className="text-xs text-gray-500">Datang ke Konveksi</p>
+                                        </div>
+                                        {deliveryType === 'pickup' && <FaCheckCircle className="ml-auto text-green-600" size={20}/>}
+                                    </div>
+                                </div>
+
+                                {/* FORM ALAMAT (Hanya muncul jika Kirim Paket) */}
+                                {deliveryType === 'shipping' && (
+                                    <div className="space-y-5 animate-fade-in-down">
+                                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+                                            <p className="text-sm text-blue-800 flex items-center gap-2">
+                                                <FaTruck /> 
+                                                <strong>Info:</strong> Ongkos kirim ditanggung pembeli saat paket sampai (COD Ongkir).
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">Provinsi</label>
+                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                    placeholder="Contoh: Jawa Timur"
+                                                    value={data.province} onChange={e => setData('province', e.target.value)} required />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">Kota/Kabupaten</label>
+                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                    placeholder="Contoh: Malang"
+                                                    value={data.city} onChange={e => setData('city', e.target.value)} required />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">Kecamatan</label>
+                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                    placeholder="Contoh: Lowokwaru"
+                                                    value={data.district} onChange={e => setData('district', e.target.value)} required />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">Desa/Kelurahan</label>
+                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                    placeholder="Contoh: Tlogomas"
+                                                    value={data.village} onChange={e => setData('village', e.target.value)} required />
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap (Jalan, RT/RW, No. Rumah)</label>
+                                            <textarea className="w-full rounded-xl border-gray-300 focus:ring-blue-500 h-24"
+                                                placeholder="Jl. Mawar No. 12, RT 01 RW 02, Patokan dekat Masjid..."
+                                                value={data.address_detail} onChange={e => setData('address_detail', e.target.value)} required />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* INFO PICKUP (Hanya muncul jika Ambil Sendiri) */}
+                                {deliveryType === 'pickup' && (
+                                    <div className="bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in-down">
+                                        <FaStore className="text-4xl text-green-600 mx-auto mb-3" />
+                                        <h3 className="text-lg font-bold text-green-800">Lokasi Pengambilan</h3>
+                                        <p className="text-green-700 mt-1">
+                                            Jl. Raya Konveksi No. 99, Kec. Lowokwaru, <br/>
+                                            Kota Malang, Jawa Timur.
+                                        </p>
+                                        <p className="text-xs text-green-600 mt-4 font-semibold bg-green-100 inline-block px-3 py-1 rounded-full">
+                                            *Tunjukkan Invoice saat pengambilan
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
+
+                        {/* === KOLOM KANAN (RINGKASAN) === */}
+                        <div className="lg:col-span-1">
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-6">
+                                <div className="flex items-center gap-3 mb-6 border-b pb-4">
+                                    <div className="bg-gray-100 p-3 rounded-full text-gray-600">
+                                        <FaBoxOpen size={20} />
+                                    </div>
+                                    <h2 className="text-xl font-bold text-gray-800">Ringkasan</h2>
+                                </div>
+
+                                {/* List Item */}
+                                <div className="space-y-4 mb-6 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+                                    {cart.map((item, idx) => (
+                                        <div key={idx} className="flex justify-between items-start text-sm border-b border-gray-50 pb-2 last:border-0">
+                                            <div>
+                                                <p className="font-semibold text-gray-700 line-clamp-2">{item.name}</p>
+                                                <p className="text-gray-500 text-xs">
+                                                    {item.quantity} x {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.finalPrice || item.price)}
+                                                </p>
+                                            </div>
+                                            <p className="font-semibold text-gray-800 whitespace-nowrap">
+                                                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format((item.finalPrice || item.price) * item.quantity)}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Perhitungan */}
+                                <div className="border-t border-dashed pt-4 space-y-3">
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>Total Harga Barang</span>
+                                        <span className="font-semibold">
+                                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(getTotalProductPrice())}
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="flex justify-between items-center text-gray-600">
+                                        <span>Biaya Pengiriman</span>
+                                        {deliveryType === 'pickup' ? (
+                                            <span className="text-green-600 font-bold text-sm bg-green-50 px-2 py-1 rounded">GRATIS</span>
+                                        ) : (
+                                            <span className="text-orange-600 font-bold text-xs bg-orange-50 px-2 py-1 rounded text-right">
+                                                BAYAR DI TEMPAT <br/> (COD ONGKIR)
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Total Grand */}
+                                <div className="mt-6 pt-4 border-t-2 border-gray-100">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-lg font-bold text-gray-800">Total Bayar</span>
+                                        <span className="text-2xl font-extrabold text-blue-600">
+                                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(getTotalProductPrice())}
+                                        </span>
+                                    </div>
+                                    {deliveryType === 'shipping' && (
+                                        <p className="text-xs text-right text-gray-400 italic">Belum termasuk ongkir ekspedisi</p>
+                                    )}
+                                </div>
+
+                                <button type="submit" disabled={processing}
+                                    className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95 flex justify-center items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                    {processing ? 'Memproses...' : (
+                                        <>
+                                            <FaCheckCircle /> Buat Pesanan
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
                 </div>
-
-                {/* KOLOM KANAN: RINGKASAN */}
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 h-fit sticky top-24">
-                    <h2 className="text-lg font-bold mb-6">Total Pembayaran</h2>
-                    
-                    {/* ... List Barang Cart ... */}
-
-                    <div className="border-t border-slate-300 pt-4 space-y-2 mt-4">
-                        <div className="flex justify-between text-slate-600">
-                            <span>Total Harga Barang</span>
-                            <span>Rp {getTotalPrice().toLocaleString('id-ID')}</span>
-                        </div>
-                        <div className="flex justify-between text-slate-600">
-                            <span>Ongkos Kirim</span>
-                            <span className="font-bold">
-                                {selectedService ? `Rp ${selectedService.cost[0].value.toLocaleString('id-ID')}` : '-'}
-                            </span>
-                        </div>
-                        <div className="flex justify-between text-xl font-bold text-slate-900 pt-2 border-t border-slate-300 mt-2">
-                            <span>Grand Total</span>
-                            <span>Rp {grandTotal.toLocaleString('id-ID')}</span>
-                        </div>
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        disabled={processing || !selectedService}
-                        className={`w-full mt-6 py-4 rounded-xl font-bold text-white shadow-lg transition
-                            ${!selectedService ? 'bg-slate-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-                    >
-                        Bayar Sekarang
-                    </button>
-                </div>
-             </form>
+            </div>
         </GuestLayout>
     );
 }

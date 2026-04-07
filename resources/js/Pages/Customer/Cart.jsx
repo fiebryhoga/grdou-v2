@@ -1,21 +1,28 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react'; // Import Router
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useCart } from '@/Contexts/CartContext';
-import { FaTrash, FaArrowRight, FaPaperclip, FaShoppingCart } from 'react-icons/fa';
+import { FaTrash, FaArrowRight, FaPaperclip, FaShoppingCart, FaEdit, FaFile } from 'react-icons/fa';
 
 export default function Cart() {
-    const { cart, removeFromCart, getTotalPrice } = useCart();
+    const { cart, removeFromCart, getTotalPrice, setItemToEdit } = useCart(); // Ambil setItemToEdit
     
     const formatIDR = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
 
-    // Helper untuk merender list ukuran dari Object
-    // Input: { "S": 2, "XL": 4 } -> Output: "S (2), XL (4)"
     const renderSizeList = (sizes) => {
         if (!sizes || typeof sizes !== 'object') return '-';
         return Object.entries(sizes)
             .map(([size, qty]) => `${size} (${qty})`)
             .join(', ');
+    };
+
+    // --- LOGIKA EDIT YANG BARU ---
+    const handleEdit = (item, index) => {
+        // 1. Simpan data item ke Context (State)
+        setItemToEdit(item, index);
+        
+        // 2. Redirect ke halaman produk tersebut
+        router.visit(route('katalog.show', item.id));
     };
 
     return (
@@ -37,68 +44,72 @@ export default function Cart() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        
-                        {/* --- LIST ITEM DI KERANJANG --- */}
-                        <div className="lg:col-span-2 space-y-4">
-                            {cart.map((item, index) => (
-                                <div key={index} className="flex gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition duration-300">
-                                    {/* Thumbnail */}
-                                    <div className="w-24 h-24 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-100">
-                                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
-                                    </div>
+                <div className="lg:col-span-2 space-y-4">
+                    {cart.map((item, index) => (
+                        <div key={index} className="flex gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition duration-300 group">
+                            <div className="w-24 h-24 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-100">
+                                <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
+                            </div>
 
-                                    {/* Detail Item */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="font-bold text-slate-900 text-lg leading-tight truncate pr-2">{item.name}</h3>
-                                            <button 
-                                                onClick={() => removeFromCart(index)} 
-                                                className="text-slate-400 hover:text-red-500 p-1 transition-colors"
-                                                title="Hapus Item"
-                                            >
-                                                <FaTrash size={16} />
-                                            </button>
-                                        </div>
-
-                                        {/* Rincian Ukuran (Bulk) */}
-                                        {item.variant?.sizes ? (
-                                            <div className="mt-2 text-xs text-slate-600 bg-slate-50 p-2 rounded inline-block border border-slate-100">
-                                                <span className="font-bold text-slate-800">Rincian Size:</span> {renderSizeList(item.variant.sizes)}
-                                            </div>
-                                        ) : item.variant?.size ? (
-                                            // Fallback jika single size
-                                            <p className="text-sm text-slate-500 mt-1">Ukuran: {item.variant.size}</p>
-                                        ) : null}
-
-                                        {/* Rincian Addons */}
-                                        {item.variant?.addons?.length > 0 && (
-                                            <div className="mt-2 flex flex-wrap gap-1">
-                                                {item.variant.addons.map((addon, idx) => (
-                                                    <span key={idx} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100 font-medium">
-                                                        + {addon.name}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {/* Indikator File Desain */}
-                                        {item.designFile && (
-                                            <div className="mt-2 flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded w-fit">
-                                                <FaPaperclip /> File: {item.designFile.name}
-                                            </div>
-                                        )}
-
-                                        {/* Harga */}
-                                        <div className="mt-3 flex items-center gap-2">
-                                            <p className="text-blue-600 font-bold">
-                                                {formatIDR(item.finalPrice || item.price)}
-                                            </p>
-                                            <span className="text-slate-400 text-sm">x {item.quantity} Pcs</span>
-                                        </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-slate-900 text-lg leading-tight truncate pr-2">{item.name}</h3>
+                                    
+                                    <div className="flex gap-1">
+                                        {/* TOMBOL EDIT */}
+                                        <button 
+                                            onClick={() => handleEdit(item, index)} 
+                                            className="text-yellow-500 hover:text-yellow-700 p-2 rounded-lg hover:bg-yellow-50 transition-colors"
+                                            title="Edit Pesanan"
+                                        >
+                                            <FaEdit size={16} />
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={() => removeFromCart(index)} 
+                                            className="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                                            title="Hapus Item"
+                                        >
+                                            <FaTrash size={16} />
+                                        </button>
                                     </div>
                                 </div>
-                            ))}
+
+                                {/* Detail Sizes */}
+                                {item.variant?.sizes && (
+                                    <div className="mt-2 text-xs text-slate-600 bg-slate-50 p-2 rounded inline-block border border-slate-100">
+                                        <span className="font-bold text-slate-800">Size:</span> {renderSizeList(item.variant.sizes)}
+                                    </div>
+                                )}
+
+                                {/* Detail Addons */}
+                                {item.variant?.addons?.length > 0 && (
+                                    <div className="mt-2 flex flex-wrap gap-1">
+                                        {item.variant.addons.map((addon, idx) => (
+                                            <span key={idx} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100 font-medium">
+                                                + {addon.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Indikator Multi File Desain */}
+                                {item.designFiles && item.designFiles.length > 0 && (
+                                    <div className="mt-2 flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded w-fit">
+                                        <FaPaperclip /> {item.designFiles.length} File Desain Terlampir
+                                    </div>
+                                )}
+
+                                <div className="mt-3 flex items-center gap-2">
+                                    <p className="text-blue-600 font-bold">
+                                        {formatIDR(item.finalPrice)}
+                                    </p>
+                                    <span className="text-slate-400 text-sm">x {item.quantity} Pcs</span>
+                                </div>
+                            </div>
                         </div>
+                    ))}
+                </div>
 
                         {/* --- SUMMARY BOX --- */}
                         <div className="bg-white p-6 rounded-2xl border border-slate-200 h-fit shadow-sm sticky top-24">
@@ -131,7 +142,6 @@ export default function Cart() {
                                 Kembali Belanja
                             </Link>
                         </div>
-
                     </div>
                 )}
             </div>

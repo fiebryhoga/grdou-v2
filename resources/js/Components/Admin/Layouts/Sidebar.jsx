@@ -19,10 +19,11 @@ export default function Sidebar({ isSidebarOpen }) {
             active: route().current('admin.product.*') 
         },
         { 
-            name: 'Pesanan Sablon', // Pastikan ini namanya beda
-            href: '#', 
+            name: 'Pesanan Sablon', 
+            // PERBAIKAN DI SINI:
+            href: route('admin.orders.index'), 
             icon: ShoppingCart, 
-            active: false 
+            active: route().current('admin.orders.*') 
         },
         { 
             name: 'Manage Admin', 

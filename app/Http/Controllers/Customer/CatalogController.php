@@ -9,24 +9,23 @@ use Inertia\Inertia;
 
 class CatalogController extends Controller
 {
-    // Halaman List Produk
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::where('is_active', true)
+        // Mengambil SEMUA produk yang aktif dari database
+        $produks = Product::where('is_active', true)
             ->latest()
-            ->paginate(12); // Tampilkan 12 produk per halaman
+            ->get();
 
         return Inertia::render('Customer/Catalog/Index', [
-            'products' => $products
+            // Mengirim data ke props 'produks' di React
+            'produks' => $produks 
         ]);
     }
 
-    // Halaman Detail Produk
     public function show($id)
     {
-        $product = Product::where('id', $id)
-            ->where('is_active', true)
-            ->firstOrFail();
+        // Mengambil detail 1 produk
+        $product = Product::where('is_active', true)->findOrFail($id);
 
         return Inertia::render('Customer/Catalog/Show', [
             'product' => $product

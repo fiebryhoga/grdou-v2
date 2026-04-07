@@ -8,11 +8,11 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage; // Jangan lupa import ini
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -26,110 +26,150 @@ class OrderController extends Controller
 
     public function checkout(Request $request)
     {
-        // 1. Validasi
+        // 1. Validasi Input
         $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'items' => 'required|array',
-            'items.*.id' => 'required|exists:products,id',
+            'customer_name'    => 'required|string|max:255',
+            'customer_email'   => 'required|email|max:255',
+            'customer_phone'   => 'required|string|max:20',
+            'delivery_type'    => 'required|in:shipping,pickup',
+            'items'            => 'required|array',
+            'items.*.id'       => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
-            // Validasi File Desain (Maks 5MB, Gambar/PDF)
-            'items.*.design_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            // Kita validasi variants agar dipastikan array
+            'items.*.variants' => 'nullable|array', 
         ]);
 
         try {
             DB::beginTransaction();
 
-            $totalPrice = 0;
+            $totalProductPrice = 0;
             $orderItemsData = [];
             $midtransItems = [];
 
-            // 2. Loop setiap item dalam keranjang
+            // --- 2. LOOP ITEMS & HITUNG ADDONS (PERBAIKAN DISINI) ---
             foreach ($request->items as $index => $item) {
-                $product = Product::find($item['id']);
+                // Ambil Produk dari DB
+                $product = Product::findOrFail($item['id']);
                 
-                // --- A. HITUNG HARGA (Base + Addons) ---
-                $unitPrice = (float) $product->base_price;
+                // Harga Dasar
+                $basePrice = (int) $product->base_price;
                 
-                // Ambil data varian/addons dari request
-                // Format yang dikirim Frontend: variants: { size: 'XL', addons: [{name: 'Bahan A', price: 5000}, ...] }
+                // Ambil Variants & Addons dari request React
                 $variants = $item['variants'] ?? [];
-                $selectedAddons = $variants['addons'] ?? [];
+                
+                // === LOGIKA HITUNG ADDONS ===
+                $addonsTotal = 0;
+                $addonNames = []; // Untuk Log debugging
 
-                // Jumlahkan harga add-ons
-                if (is_array($selectedAddons)) {
-                    foreach ($selectedAddons as $addon) {
-                        if (isset($addon['price']) && is_numeric($addon['price'])) {
-                            $unitPrice += $addon['price'];
+                if (!empty($variants['addons']) && is_array($variants['addons'])) {
+                    foreach ($variants['addons'] as $addon) {
+                        // Paksa ambil harga, jika tidak ada set 0
+                        $price = isset($addon['price']) ? (int) $addon['price'] : 0;
+                        
+                        if ($price > 0) {
+                            $addonsTotal += $price;
+                            $addonNames[] = ($addon['name'] ?? 'Addon') . " (+$price)";
                         }
                     }
                 }
 
-                $subtotal = $unitPrice * $item['quantity'];
-                $totalPrice += $subtotal;
+                // HARGA FINAL SATUAN = Harga Dasar + Total Addons
+                $finalUnitPrice = $basePrice + $addonsTotal;
 
-                // --- B. HANDLE UPLOAD FILE DESAIN ---
-                $designPath = null;
-                // Cek apakah ada file di index ini
-                if ($request->hasFile("items.{$index}.design_file")) {
-                    $file = $request->file("items.{$index}.design_file");
-                    // Nama file unik: time_productID_random.ext
-                    $filename = time() . '_' . $product->id . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                    
-                    // Simpan ke storage/app/public/designs
-                    $path = $file->storeAs('designs', $filename, 'public');
-                    $designPath = '/storage/' . $path;
+                // Hitung Subtotal (Harga Final x Quantity)
+                $quantity = (int) $item['quantity'];
+                $subtotal = $finalUnitPrice * $quantity;
+                $totalProductPrice += $subtotal;
+
+                // --- LOGGING DEBUGGING (Cek di storage/logs/laravel.log) ---
+                Log::info("CHECKOUT CALCULATION:");
+                Log::info("- Product: {$product->name}");
+                Log::info("- Base Price: {$basePrice}");
+                Log::info("- Addons Found: " . implode(', ', $addonNames));
+                Log::info("- Total Addons Cost: {$addonsTotal}");
+                Log::info("- Final Unit Price: {$finalUnitPrice}");
+                Log::info("----------------------------------");
+
+                // Handle Upload File (Sama seperti sebelumnya)
+                $uploadedPaths = [];
+                if ($request->hasFile("items.{$index}.design_files")) {
+                    foreach ($request->file("items.{$index}.design_files") as $file) {
+                        $filename = time() . '_' . $product->id . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
+                        $path = $file->storeAs('designs', $filename, 'public');
+                        $uploadedPaths[] = '/storage/' . $path;
+                    }
                 }
 
-                // --- C. SIAPKAN DATA UTK DB ---
+                // Simpan ke Array Database
                 $orderItemsData[] = [
-                    'product_id' => $product->id,
+                    'product_id'   => $product->id,
                     'product_name' => $product->name,
-                    'price' => $unitPrice, // Harga Final per item
-                    'quantity' => $item['quantity'],
-                    'variants' => json_encode($variants), // Simpan detail size & addons
-                    'design_file' => $designPath, // Path gambar
+                    'price'        => $finalUnitPrice, // PENTING: Masukkan harga final
+                    'quantity'     => $quantity,
+                    'variants'     => json_encode($variants),
+                    'design_file'  => count($uploadedPaths) > 0 ? json_encode($uploadedPaths) : null,
                 ];
 
-                // --- D. SIAPKAN DATA UTK MIDTRANS ---
+                // Simpan ke Array Midtrans
                 $midtransItems[] = [
-                    'id' => $product->id,
-                    'price' => (int) $unitPrice,
-                    'quantity' => (int) $item['quantity'],
-                    'name' => substr($product->name, 0, 50),
+                    'id'       => (string) $product->id,
+                    'price'    => $finalUnitPrice, // PENTING: Masukkan harga final
+                    'quantity' => $quantity,
+                    'name'     => substr($product->name, 0, 40), // Midtrans limit character
                 ];
             }
 
-            // 3. Buat Order Utama
+            // --- 3. SETTING PENGIRIMAN ---
+            $shippingCost = 0;
+            
+            if ($request->delivery_type === 'shipping') {
+                $finalAddress = strtoupper(
+                    "{$request->address_detail}, DS. {$request->village}, KEC. {$request->district}, {$request->city}, {$request->province}"
+                );
+                $courierName = 'Ekspedisi (COD Ongkir)';
+                $serviceName = 'Bayar Ongkir di Tujuan';
+            } else {
+                $finalAddress = 'AMBIL DI TOKO';
+                $courierName = 'Pickup';
+                $serviceName = 'Ambil Sendiri';
+            }
+
+            // Total Akhir
+            $grandTotal = $totalProductPrice + $shippingCost;
+
+            // --- 4. CREATE ORDER DB ---
             $order = Order::create([
-                'user_id' => null, // Guest
-                'order_number' => 'INV-' . time() . '-' . Str::upper(Str::random(4)),
-                'total_price' => $totalPrice,
-                'status' => 'pending',
-                'customer_name' => $request->customer_name,
-                'customer_email' => $request->customer_email,
-                'customer_phone' => $request->customer_phone,
-                'shipping_address' => $request->shipping_address,
+                'user_id'          => auth()->id() ?? null,
+                'order_number'     => 'INV-' . time() . '-' . Str::upper(Str::random(4)),
+                'total_price'      => $grandTotal,
+                'status'           => 'pending',
+                'customer_name'    => $request->customer_name,
+                'customer_email'   => $request->customer_email,
+                'customer_phone'   => $request->customer_phone,
+                'shipping_address' => $finalAddress,
+                'shipping_cost'    => 0,
+                'shipping_courier' => $courierName,
+                'shipping_service' => $serviceName,
             ]);
 
-            // 4. Simpan Order Items
             foreach ($orderItemsData as $data) {
                 $data['order_id'] = $order->id;
                 OrderItem::create($data);
             }
 
-            // 5. Midtrans Snap Token
+            // --- 5. SNAP TOKEN ---
             $params = [
                 'transaction_details' => [
-                    'order_id' => $order->order_number,
-                    'gross_amount' => (int) $totalPrice,
+                    'order_id'     => $order->order_number,
+                    'gross_amount' => $grandTotal, // Pastikan ini pakai total yang sudah dihitung ulang
                 ],
                 'customer_details' => [
                     'first_name' => $request->customer_name,
-                    'email' => $request->customer_email,
-                    'phone' => $request->customer_phone,
+                    'email'      => $request->customer_email,
+                    'phone'      => $request->customer_phone,
+                    'shipping_address' => [
+                        'address' => substr($finalAddress, 0, 100)
+                    ]
                 ],
                 'item_details' => $midtransItems,
             ];
@@ -138,15 +178,15 @@ class OrderController extends Controller
             $order->update(['snap_token' => $snapToken]);
 
             DB::commit();
-
             return redirect()->route('order.show', $order->id);
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("Checkout Error: " . $e->getMessage());
             return back()->withErrors(['message' => 'Gagal memproses order: ' . $e->getMessage()]);
         }
     }
-
+    
     public function show(Order $order)
     {
         $order->load('items');

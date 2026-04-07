@@ -6,105 +6,56 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\CatalogController;
-use App\Http\Controllers\Api\OngkirController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC ROUTES (CUSTOMER / GUEST)
+| PUBLIC ROUTES
 |--------------------------------------------------------------------------
-| Area ini untuk customer, tidak perlu login.
 */
 
-// 1. Home & Landing
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// 2. Katalog & Produk
+// Katalog
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog.index');
 Route::get('/katalog/{id}', [CatalogController::class, 'show'])->name('katalog.show');
+Route::redirect('/produk', '/katalog');
 
-// Redirect /produk ke /katalog agar konsisten
-Route::redirect('/produk', '/katalog'); 
-
-// 3. Keranjang & Transaksi
+// Keranjang
 Route::get('/keranjang', function () {
     return Inertia::render('Customer/Cart');
 })->name('cart.index');
 
+// Checkout (PERBAIKAN: Tidak perlu kirim data session, biarkan React ambil dari LocalStorage)
 Route::get('/checkout', function () {
     return Inertia::render('Customer/Checkout');
 })->name('checkout.form');
 
-// Alias untuk menu navbar (Buat Orderan)
-Route::get('/order/create', function () {
-    return Inertia::render('Customer/Checkout');
-})->name('order.create'); 
-
-// Proses Checkout (POST)
+// Proses Checkout
 Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
 
-// Halaman Invoice / Midtrans Payment
+// Route tambahan
+Route::get('/order/create', function () { return Inertia::render('Customer/Checkout'); })->name('order.create');
 Route::get('/order/{order}', [OrderController::class, 'show'])->name('order.show');
-
-// Placeholder Tracking
-Route::get('/order/track', function () {
-    return Inertia::render('Customer/Track'); 
-})->name('order.track');
-
-// 4. Halaman Informasi
-Route::get('/tentang-kami', function () {
-    return Inertia::render('Customer/About'); 
-})->name('tentang.index');
-
-Route::get('/galeri', function () {
-    return Inertia::render('Customer/Gallery'); 
-})->name('galeri.index');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Route::prefix('api/ongkir')->group(function () {
-    Route::get('/provinces', [OngkirController::class, 'getProvinces']);
-    Route::get('/cities/{id}', [OngkirController::class, 'getCities']);
-    Route::post('/check', [OngkirController::class, 'checkOngkir']);
-});
-
+Route::get('/order/track', function () { return Inertia::render('Customer/Track'); })->name('order.track');
+Route::get('/tentang-kami', function () { return Inertia::render('Customer/About'); })->name('tentang.index');
+Route::get('/galeri', function () { return Inertia::render('Customer/Gallery'); })->name('galeri.index');
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (AUTHENTICATED)
+| ADMIN ROUTES (Tidak ada perubahan)
 |--------------------------------------------------------------------------
-| Area khusus Admin.
 */
-
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Dashboard
     Route::get('/admin', function () {
         return Inertia::render('Admin/Dashboard');
     })->name('dashboard');
 
-    // Manage Admins
     Route::resource('manage-admin', ManageAdminController::class)
         ->names('admin.manage')
-        ->except(['create', 'show', 'edit']); 
-        // Note: resource route otomatis bikin index, store, update, destroy
+        ->except(['create', 'show', 'edit']);
 
-    // Manage Products
     Route::prefix('admin/product')->name('admin.product.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('/create', [ProductController::class, 'create'])->name('create');
@@ -115,6 +66,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
+
+
+    // Masukkan ini di dalam grup middleware admin
+    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+    Route::patch('/orders/{id}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.update-status');
 });
 
 /*
