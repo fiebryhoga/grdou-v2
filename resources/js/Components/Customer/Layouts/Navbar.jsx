@@ -138,7 +138,7 @@ const Navbar = () => {
                         className="relative p-2 text-slate-600 hover:text-[#277cdd] transition duration-300"
                     >
                         <FaShoppingCart size={22} />
-                        {/* Badge Cart */}
+                        {/* Badge Cart - */}
                         {cart && cart.length > 0 && (
                             <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
                                 {cart.length}
