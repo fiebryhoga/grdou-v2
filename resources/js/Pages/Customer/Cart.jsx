@@ -33,12 +33,12 @@ export default function Cart() {
                 </h1>
 
                 {cart.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-300">
+                    <div className="text-center py-20 bg-white rounded-lg border-2 border-dashed border-slate-300">
                         <div className="mb-4 text-slate-300 flex justify-center">
                             <FaShoppingCart size={48} />
                         </div>
                         <p className="text-slate-500 mb-6 text-lg">Keranjang Anda masih kosong.</p>
-                        <Link href={route('katalog.index')} className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                        <Link href={route('katalog.index')} className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
                             Mulai Belanja &rarr;
                         </Link>
                     </div>
@@ -46,7 +46,7 @@ export default function Cart() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-4">
                     {cart.map((item, index) => (
-                        <div key={index} className="flex gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition duration-300 group">
+                        <div key={index} className="flex gap-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition duration-300 group">
                             <div className="w-24 h-24 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-100">
                                 <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
                             </div>
@@ -112,7 +112,7 @@ export default function Cart() {
                 </div>
 
                         {/* --- SUMMARY BOX --- */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 h-fit shadow-sm sticky top-24">
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 h-fit shadow-sm sticky top-24">
                             <h3 className="font-bold text-lg mb-6 text-slate-900 border-b border-slate-100 pb-4">Ringkasan Pesanan</h3>
                             
                             <div className="space-y-3 mb-6">
@@ -133,7 +133,7 @@ export default function Cart() {
                             
                             <Link 
                                 href={route('checkout.form')}
-                                className="block w-full bg-slate-900 text-white text-center py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                                className="block w-full bg-slate-900 text-white text-center py-4 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2"
                             >
                                 Lanjut Pembayaran <FaArrowRight size={14}/>
                             </Link>

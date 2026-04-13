@@ -8,13 +8,13 @@ export default function AuthenticatedLayout({ header, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
-            {/* Sidebar Komponen */}
-            <Sidebar isSidebarOpen={isSidebarOpen} />
+        <div className="min-h-screen bg-slate-50 flex overflow-hidden">
+            {/* Komponen Sidebar */}
+            <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
-            {/* Main Area */}
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Navbar Komponen */}
+            {/* Area Utama */}
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+                {/* Komponen Navbar */}
                 <Navbar 
                     user={user} 
                     isSidebarOpen={isSidebarOpen} 
@@ -22,9 +22,11 @@ export default function AuthenticatedLayout({ header, children }) {
                     header={header} 
                 />
 
-                {/* Main Content */}
-                <main className="flex-1 overflow-y-auto p-4 sm:p-8">
-                    <div className="max-w-7xl mx-auto">
+                {/* Konten Utama */}
+                {/* Padding dikurangi menjadi p-4 sm:p-6 agar lebih rapat dengan tepi */}
+                <main className="flex-1 overflow-y-auto p-4 sm:p-2">
+                    {/* Menghapus max-w-7xl dan mx-auto agar layout menggunakan lebar penuh secara maksimal */}
+                    <div className="w-full">
                         {children}
                     </div>
                 </main>

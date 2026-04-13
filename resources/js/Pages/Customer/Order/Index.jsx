@@ -53,9 +53,9 @@ export default function TestOrder({ products }) {
             <div className="max-w-6xl mx-auto mb-10 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900 italic tracking-tighter">GR-DOU <span className="text-blue-600">PRODUCTION</span></h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">Estimasi Biaya Produksi</p>
+                    <p className="text-[10px] font-bold text-slate-400 capitalize tracking-[0.3em]">Estimasi Biaya Produksi</p>
                 </div>
-                <Link href="/" className="text-[10px] font-black uppercase text-slate-400 hover:text-blue-600 transition-colors">
+                <Link href="/" className="text-[10px] font-black capitalize text-slate-400 hover:text-blue-600 transition-colors">
                     Back to Home
                 </Link>
             </div>
@@ -64,24 +64,24 @@ export default function TestOrder({ products }) {
                 <div className="lg:col-span-2 space-y-6">
                     {/* Data Pelanggan */}
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-sm font-black text-slate-900 mb-6 capitalize tracking-widest flex items-center gap-2">
                             <User size={18} className="text-blue-600" /> Informasi Kontak
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" placeholder="Nama Anda" required className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold focus:ring-2 focus:ring-blue-600 transition-all" 
+                            <input type="text" placeholder="Nama Anda" required className="w-full px-5 py-4 rounded-lg bg-slate-50 border-none font-bold focus:ring-2 focus:ring-blue-600 transition-all" 
                                 value={data.customer_name} onChange={e => setData('customer_name', e.target.value)} />
-                            <input type="text" placeholder="Nomor WhatsApp (Aktif)" required className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold focus:ring-2 focus:ring-blue-600 transition-all"
+                            <input type="text" placeholder="Nomor WhatsApp (Aktif)" required className="w-full px-5 py-4 rounded-lg bg-slate-50 border-none font-bold focus:ring-2 focus:ring-blue-600 transition-all"
                                 value={data.customer_whatsapp} onChange={e => setData('customer_whatsapp', e.target.value)} />
                         </div>
                     </div>
 
                     {/* Pilih Produk & Matriks Ukuran */}
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-sm font-black text-slate-900 mb-6 capitalize tracking-widest flex items-center gap-2">
                             <ShoppingBag size={18} className="text-blue-600" /> Produk & Jumlah Pesanan
                         </h3>
                         
-                        <select className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold mb-8" 
+                        <select className="w-full px-5 py-4 rounded-lg bg-slate-50 border-none font-bold mb-8" 
                             onChange={e => handleProductChange(e.target.value)}>
                             <option value="">Pilih Jenis Pakaian...</option>
                             {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -90,9 +90,9 @@ export default function TestOrder({ products }) {
                         {selectedProduct && (
                             <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
                                 {Object.keys(data.size_details).map(size => (
-                                    <div key={size} className="bg-slate-50 p-4 rounded-2xl text-center">
+                                    <div key={size} className="bg-slate-50 p-4 rounded-lg text-center">
                                         <p className="text-xs font-black text-slate-400 mb-2">{size}</p>
-                                        <input type="number" min="0" className="w-full bg-white border-none rounded-xl text-center font-black text-blue-600" 
+                                        <input type="number" min="0" className="w-full bg-white border-none rounded-lg text-center font-black text-blue-600" 
                                             value={data.size_details[size]} onChange={e => handleSizeChange(size, e.target.value)} />
                                     </div>
                                 ))}
@@ -103,12 +103,12 @@ export default function TestOrder({ products }) {
                     {/* Kustomisasi Addons */}
                     {selectedProduct && selectedProduct.addons && (
                         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 animate-in fade-in duration-700">
-                            <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest">Pilihan Bahan & Sablon</h3>
+                            <h3 className="text-sm font-black text-slate-900 mb-6 capitalize tracking-widest">Pilihan Bahan & Sablon</h3>
                             <div className="space-y-4">
                                 {selectedProduct.addons.map((group, idx) => (
                                     <div key={idx}>
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{group.group_name}</label>
-                                        <select required className="w-full mt-2 px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold text-sm"
+                                        <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest ml-1">{group.group_name}</label>
+                                        <select required className="w-full mt-2 px-5 py-4 rounded-lg bg-slate-50 border-none font-bold text-sm"
                                             onChange={e => {
                                                 const opt = group.options.find(o => o.label === e.target.value);
                                                 if(opt) setData('selected_addons', { ...data.selected_addons, [group.group_name]: { label: opt.label, price: opt.extra_price } });
@@ -128,14 +128,14 @@ export default function TestOrder({ products }) {
                 {/* Sidebar Billing */}
                 <div className="lg:col-span-1">
                     <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl sticky top-10">
-                        <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                        <h3 className="text-sm font-black capitalize tracking-widest mb-8 flex items-center gap-2">
                             <Calculator size={18} className="text-blue-400" /> Ringkasan Biaya
                         </h3>
                         
                         <div className="space-y-4">
                             <div className="flex justify-between items-end">
-                                <span className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Total Kuantitas</span>
-                                <span className="text-white text-2xl font-black">{data.total_qty} <span className="text-xs text-slate-500 uppercase">Pcs</span></span>
+                                <span className="text-slate-400 font-bold capitalize text-[10px] tracking-widest">Total Kuantitas</span>
+                                <span className="text-white text-2xl font-black">{data.total_qty} <span className="text-xs text-slate-500 capitalize">Pcs</span></span>
                             </div>
                             <div className="h-[1px] bg-slate-800 my-4"></div>
                             
@@ -153,14 +153,14 @@ export default function TestOrder({ products }) {
                             </div>
 
                             <div className="pt-8 text-center border-t border-slate-800 mt-8">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Estimasi Total</p>
+                                <p className="text-[10px] font-black text-slate-500 capitalize tracking-[0.3em] mb-2">Estimasi Total</p>
                                 <h2 className="text-4xl font-black text-blue-400">
                                     Rp{new Intl.NumberFormat('id-ID').format(data.total_price)}
                                 </h2>
                             </div>
 
                             <button type="submit" disabled={processing || data.total_qty === 0} 
-                                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 text-white font-black py-5 rounded-2xl mt-8 shadow-lg shadow-blue-900 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs active:scale-95">
+                                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 text-white font-black py-5 rounded-lg mt-8 shadow-lg shadow-blue-900 transition-all flex items-center justify-center gap-2 capitalize tracking-widest text-xs active:scale-95">
                                 <CheckCircle size={18} /> {processing ? 'Memproses...' : 'Kirim Pesanan'}
                             </button>
                             <p className="text-[9px] text-center text-slate-500 mt-4 italic">* Harga dapat berubah sesuai detail kerumitan desain sablon.</p>

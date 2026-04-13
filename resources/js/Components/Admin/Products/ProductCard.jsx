@@ -5,7 +5,7 @@ export default function ProductCard({ product, onDelete }) {
     const formatIDR = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
 
     return (
-        <div className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300 flex flex-col h-full">
+        <div className="group bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300 flex flex-col h-full">
             {/* Image Section */}
             <div className="relative aspect-[4/3] overflow-hidden bg-slate-50">
                 <img 
@@ -23,7 +23,7 @@ export default function ProductCard({ product, onDelete }) {
             {/* Content Section */}
             <div className="p-5 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold capitalize tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                         Article
                     </span>
                 </div>
@@ -40,14 +40,14 @@ export default function ProductCard({ product, onDelete }) {
                 <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
                     <Link 
                         href={route('admin.product.show', product.id)}
-                        className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-slate-800 transition-colors"
+                        className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-900 text-white py-2.5 rounded-lg text-xs font-semibold hover:bg-slate-800 transition-colors"
                     >
                         <Eye size={14} /> Details
                     </Link>
                     
                     <Link 
                         href={route('admin.product.edit', product.id)}
-                        className="p-2.5 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                        className="p-2.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors"
                         title="Edit"
                     >
                         <Edit3 size={16} />
@@ -55,7 +55,7 @@ export default function ProductCard({ product, onDelete }) {
                     
                     <button 
                         onClick={() => onDelete(product)}
-                        className="p-2.5 border border-slate-200 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-colors"
+                        className="p-2.5 border border-slate-200 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-colors"
                         title="Hapus"
                     >
                         <Trash2 size={16} />

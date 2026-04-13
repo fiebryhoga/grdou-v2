@@ -12,7 +12,19 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->text('keunggulan')->nullable();
+            
+            // 4 Kolom Keunggulan (Judul & Deskripsi)
+            $table->string('keunggulan_1_title')->nullable();
+            $table->text('keunggulan_1_desc')->nullable();
+            
+            $table->string('keunggulan_2_title')->nullable();
+            $table->text('keunggulan_2_desc')->nullable();
+            
+            $table->string('keunggulan_3_title')->nullable();
+            $table->text('keunggulan_3_desc')->nullable();
+            
+            $table->string('keunggulan_4_title')->nullable();
+            $table->text('keunggulan_4_desc')->nullable();
             
             // Kolom untuk 3 gambar client
             $table->string('client_image_1')->nullable();

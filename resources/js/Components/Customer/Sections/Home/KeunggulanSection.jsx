@@ -61,7 +61,7 @@ const KeunggulanSection = ({ keunggulans = [] }) => {
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
                 
                 <div className="text-center max-w-3xl mx-auto mb-20">
-                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-blue-50 px-5 py-2 rounded-full inline-block mb-5">
+                    <span className="text-[#277cdd] font-bold tracking-widest capitalize text-xs bg-blue-50 px-5 py-2 rounded-full inline-block mb-5">
                         Kenapa Memilih Kami?
                     </span>
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
@@ -79,11 +79,11 @@ const KeunggulanSection = ({ keunggulans = [] }) => {
                     {displayData.map((item, index) => (
                         <div 
                             key={item.id || index}
-                            className="group relative p-8 rounded-3xl bg-white border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-500 overflow-hidden"
+                            className="group relative p-8 rounded-lg bg-white border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-500 overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-blue-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
-                            <div className="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#277cdd] to-blue-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-blue-500/30 group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500">
+                            <div className="relative z-10 w-16 h-16 rounded-lg bg-gradient-to-br from-[#277cdd] to-blue-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-blue-500/30 group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500">
                                 {getIcon(item, index)}
                             </div>
 

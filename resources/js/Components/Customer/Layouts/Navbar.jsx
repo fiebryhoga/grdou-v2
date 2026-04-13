@@ -80,7 +80,7 @@ const Navbar = () => {
                         </button>
 
                         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 transform group-hover:translate-y-0 translate-y-3">
-                            <div className="w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden flex flex-col">
+                            <div className="w-52 bg-white rounded-lg shadow-xl border border-gray-100 py-2 overflow-hidden flex flex-col">
                                 <Link href={route("order.create")} className={`px-5 py-3 text-sm transition-colors ${url === "/order/create" ? "text-[#277cdd] font-semibold bg-blue-50/50" : "text-gray-600 hover:bg-gray-50 hover:text-[#277cdd]"}`}>Buat Orderan Baru</Link>
                                 <Link href={route("order.track")} className={`px-5 py-3 text-sm transition-colors ${url === "/order/track" ? "text-[#277cdd] font-semibold bg-blue-50/50" : "text-gray-600 hover:bg-gray-50 hover:text-[#277cdd]"}`}>Lacak Status Order</Link>
                             </div>
@@ -119,7 +119,7 @@ const Navbar = () => {
                     <Link href={route('tentang.index')} className={`block py-3 px-4 rounded-lg text-base font-medium transition-colors ${isTentangPageActive ? "bg-blue-50 text-[#277cdd]" : "text-gray-600 hover:bg-gray-50 hover:text-[#277cdd]"}`}>Tentang Kami</Link>
                     
                     <div className="pt-4 mt-2">
-                        <a href={waLink} className="flex items-center justify-center gap-2 w-full bg-[#277cdd] hover:bg-[#1f63b3] text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm">
+                        <a href={waLink} className="flex items-center justify-center gap-2 w-full bg-[#277cdd] hover:bg-[#1f63b3] text-white font-semibold py-3.5 rounded-lg transition-colors shadow-sm">
                             <FaWhatsapp size={20} />
                             <span>Konsultasi via WhatsApp</span>
                         </a>

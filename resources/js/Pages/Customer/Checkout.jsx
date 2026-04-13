@@ -88,11 +88,11 @@ export default function Checkout() {
             <GuestLayout>
                 <Head title="Checkout Kosong" />
                 <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full">
+                    <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100 max-w-md w-full">
                         <FaExclamationCircle className="text-6xl text-gray-300 mb-4 mx-auto" />
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">Keranjang Belanja Kosong</h2>
                         <p className="text-gray-500 mb-6">Anda belum memilih produk apapun.</p>
-                        <a href={route('katalog.index')} className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition">
+                        <a href={route('katalog.index')} className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition">
                             Belanja Sekarang
                         </a>
                     </div>
@@ -120,7 +120,7 @@ export default function Checkout() {
                         <div className="lg:col-span-2 space-y-6">
                             
                             {/* 1. DATA PEMESAN */}
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                                 <div className="flex items-center gap-3 mb-6 border-b pb-4">
                                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
                                         <FaUser size={20} />
@@ -133,7 +133,7 @@ export default function Checkout() {
                                         <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
                                         <div className="relative">
                                             <FaUser className="absolute left-3 top-3 text-gray-400" />
-                                            <input type="text" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                            <input type="text" className="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
                                                 placeholder="Nama sesuai KTP"
                                                 value={data.customer_name} onChange={e => setData('customer_name', e.target.value)} required />
                                         </div>
@@ -144,7 +144,7 @@ export default function Checkout() {
                                         <label className="block text-sm font-semibold text-gray-700 mb-1">No. WhatsApp</label>
                                         <div className="relative">
                                             <FaPhone className="absolute left-3 top-3 text-gray-400" />
-                                            <input type="text" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                            <input type="text" className="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
                                                 placeholder="08xxxxxxxxxx"
                                                 value={data.customer_phone} onChange={e => setData('customer_phone', e.target.value)} required />
                                         </div>
@@ -154,7 +154,7 @@ export default function Checkout() {
                                         <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                                         <div className="relative">
                                             <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
-                                            <input type="email" className="pl-10 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+                                            <input type="email" className="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
                                                 placeholder="email@contoh.com"
                                                 value={data.customer_email} onChange={e => setData('customer_email', e.target.value)} required />
                                         </div>
@@ -163,7 +163,7 @@ export default function Checkout() {
                             </div>
 
                             {/* 2. METODE & ALAMAT */}
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                                 <div className="flex items-center gap-3 mb-6 border-b pb-4">
                                     <div className="bg-orange-100 p-3 rounded-full text-orange-600">
                                         <FaMapMarkedAlt size={20} />
@@ -176,7 +176,7 @@ export default function Checkout() {
                                     {/* Opsi 1: Kirim Paket */}
                                     <div 
                                         onClick={() => handleMethodChange('shipping')}
-                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all flex items-center gap-4
                                         ${deliveryType === 'shipping' 
                                             ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
                                             : 'border-gray-200 hover:border-blue-300'}`}>
@@ -193,7 +193,7 @@ export default function Checkout() {
                                     {/* Opsi 2: Ambil Sendiri */}
                                     <div 
                                         onClick={() => handleMethodChange('pickup')}
-                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all flex items-center gap-4
                                         ${deliveryType === 'pickup' 
                                             ? 'border-green-600 bg-green-50 ring-1 ring-green-600' 
                                             : 'border-gray-200 hover:border-green-300'}`}>
@@ -221,25 +221,25 @@ export default function Checkout() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Provinsi</label>
-                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                <input type="text" className="w-full rounded-lg border-gray-300 focus:ring-blue-500"
                                                     placeholder="Contoh: Jawa Timur"
                                                     value={data.province} onChange={e => setData('province', e.target.value)} required />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Kota/Kabupaten</label>
-                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                <input type="text" className="w-full rounded-lg border-gray-300 focus:ring-blue-500"
                                                     placeholder="Contoh: Malang"
                                                     value={data.city} onChange={e => setData('city', e.target.value)} required />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Kecamatan</label>
-                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                <input type="text" className="w-full rounded-lg border-gray-300 focus:ring-blue-500"
                                                     placeholder="Contoh: Lowokwaru"
                                                     value={data.district} onChange={e => setData('district', e.target.value)} required />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Desa/Kelurahan</label>
-                                                <input type="text" className="w-full rounded-xl border-gray-300 focus:ring-blue-500"
+                                                <input type="text" className="w-full rounded-lg border-gray-300 focus:ring-blue-500"
                                                     placeholder="Contoh: Tlogomas"
                                                     value={data.village} onChange={e => setData('village', e.target.value)} required />
                                             </div>
@@ -247,7 +247,7 @@ export default function Checkout() {
                                         
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap (Jalan, RT/RW, No. Rumah)</label>
-                                            <textarea className="w-full rounded-xl border-gray-300 focus:ring-blue-500 h-24"
+                                            <textarea className="w-full rounded-lg border-gray-300 focus:ring-blue-500 h-24"
                                                 placeholder="Jl. Mawar No. 12, RT 01 RW 02, Patokan dekat Masjid..."
                                                 value={data.address_detail} onChange={e => setData('address_detail', e.target.value)} required />
                                         </div>
@@ -256,7 +256,7 @@ export default function Checkout() {
 
                                 {/* INFO PICKUP (Hanya muncul jika Ambil Sendiri) */}
                                 {deliveryType === 'pickup' && (
-                                    <div className="bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in-down">
+                                    <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center animate-fade-in-down">
                                         <FaStore className="text-4xl text-green-600 mx-auto mb-3" />
                                         <h3 className="text-lg font-bold text-green-800">Lokasi Pengambilan</h3>
                                         <p className="text-green-700 mt-1">
@@ -273,7 +273,7 @@ export default function Checkout() {
 
                         {/* === KOLOM KANAN (RINGKASAN) === */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-6">
+                            <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-100 sticky top-6">
                                 <div className="flex items-center gap-3 mb-6 border-b pb-4">
                                     <div className="bg-gray-100 p-3 rounded-full text-gray-600">
                                         <FaBoxOpen size={20} />
@@ -333,7 +333,7 @@ export default function Checkout() {
                                 </div>
 
                                 <button type="submit" disabled={processing}
-                                    className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95 flex justify-center items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                    className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-200 transition-all active:scale-95 flex justify-center items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed">
                                     {processing ? 'Memproses...' : (
                                         <>
                                             <FaCheckCircle /> Buat Pesanan

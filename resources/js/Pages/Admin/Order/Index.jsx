@@ -60,7 +60,7 @@ export default function Index({ auth, orders, filters }) {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                             <input 
                                 type="text" 
-                                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm transition"
+                                className="w-full pl-10 pr-4 py-2.5 rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm transition"
                                 placeholder="Cari No. Invoice / Nama..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -69,10 +69,10 @@ export default function Index({ auth, orders, filters }) {
                     </div>
 
                     {/* Table Card */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
-                                <thead className="bg-slate-50 text-slate-500 uppercase font-bold text-xs border-b border-slate-200">
+                                <thead className="bg-slate-50 text-slate-500 capitalize font-bold text-xs border-b border-slate-200">
                                     <tr>
                                         <th className="px-6 py-4">Invoice ID</th>
                                         <th className="px-6 py-4">Pelanggan</th>

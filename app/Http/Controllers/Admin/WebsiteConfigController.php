@@ -22,18 +22,32 @@ class WebsiteConfigController extends Controller
 
     public function update(Request $request)
     {
-        $config = WebsiteConfig::first();
+        // Gunakan firstOrCreate agar aman jika data kosong
+        $config = WebsiteConfig::firstOrCreate(['id' => 1]);
 
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'keunggulan' => 'nullable|string',
+            
+            // Validasi 4 Keunggulan
+            'keunggulan_1_title' => 'nullable|string|max:255',
+            'keunggulan_1_desc' => 'nullable|string',
+            'keunggulan_2_title' => 'nullable|string|max:255',
+            'keunggulan_2_desc' => 'nullable|string',
+            'keunggulan_3_title' => 'nullable|string|max:255',
+            'keunggulan_3_desc' => 'nullable|string',
+            'keunggulan_4_title' => 'nullable|string|max:255',
+            'keunggulan_4_desc' => 'nullable|string',
+            
+            // Validasi Kontak & Sosmed
             'whatsapp' => 'nullable|string|max:20',
             'email' => 'nullable|email',
             'address' => 'nullable|string',
             'youtube' => 'nullable|string|url',
             'facebook' => 'nullable|string|url',
             'instagram' => 'nullable|string|url',
+            
+            // Validasi Gambar Klien
             'client_image_1' => 'nullable|image|max:2048',
             'client_image_2' => 'nullable|image|max:2048',
             'client_image_3' => 'nullable|image|max:2048',

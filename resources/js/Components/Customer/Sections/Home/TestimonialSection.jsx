@@ -41,7 +41,7 @@ const TestimonialSection = ({ testimonials = [] }) => {
 
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 mb-12">
                 <div className="text-center max-w-2xl mx-auto">
-                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
+                    <span className="text-[#277cdd] font-bold tracking-widest capitalize text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
                         Testimoni Pelanggan
                     </span>
                     <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-5 leading-tight tracking-tight">
@@ -62,7 +62,7 @@ const TestimonialSection = ({ testimonials = [] }) => {
                         {safeItems.map((item, idx) => (
                             <div 
                                 key={`first-${item.id || idx}-${idx}`}
-                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
+                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-lg border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
                             >
                                 <FaQuoteLeft className="absolute top-8 right-8 text-blue-50" size={40} />
                                 
@@ -97,7 +97,7 @@ const TestimonialSection = ({ testimonials = [] }) => {
                         {safeItems.map((item, idx) => (
                             <div 
                                 key={`second-${item.id || idx}-${idx}`}
-                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
+                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-lg border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
                             >
                                 <FaQuoteLeft className="absolute top-8 right-8 text-blue-50" size={40} />
                                 

@@ -66,14 +66,14 @@ export default function Show({ auth, order }) {
                         <div className="flex items-center gap-4">
                             <Link 
                                 href={route('admin.orders.index')}
-                                className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm"
+                                className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm"
                             >
                                 <ChevronLeft size={20} />
                             </Link>
                             <div>
                                 <h2 className="text-2xl font-extrabold text-slate-800 flex items-center gap-3">
                                     Pesanan {order.order_number}
-                                    <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${getStatusStyle(order.status)}`}>
+                                    <span className={`px-3 py-1 text-xs font-bold capitalize tracking-wider rounded-full ${getStatusStyle(order.status)}`}>
                                         {order.status}
                                     </span>
                                 </h2>
@@ -84,7 +84,7 @@ export default function Show({ auth, order }) {
                         </div>
 
                         {/* Form Update Status */}
-                        <form onSubmit={handleUpdateStatus} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                        <form onSubmit={handleUpdateStatus} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
                             <select
                                 value={data.status}
                                 onChange={(e) => setData('status', e.target.value)}
@@ -113,7 +113,7 @@ export default function Show({ auth, order }) {
                         
                         {/* --- KOLOM KIRI (DETAIL ITEM) --- */}
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
                                     <Package className="text-[#277cdd]" size={20} />
                                     <h3 className="font-bold text-slate-800 text-lg">Detail Produk</h3>
@@ -134,15 +134,15 @@ export default function Show({ auth, order }) {
                                                         </p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Subtotal</p>
+                                                        <p className="text-xs text-slate-400 capitalize font-bold tracking-wider">Subtotal</p>
                                                         <p className="text-lg font-black text-[#277cdd]">{formatIDR(item.price * item.quantity)}</p>
                                                     </div>
                                                 </div>
 
                                                 {/* Variants & Addons Box */}
                                                 {variants && Object.keys(variants).length > 0 && (
-                                                    <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                                                        <h5 className="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Varian & Spesifikasi</h5>
+                                                    <div className="bg-slate-50 rounded-lg p-4 mb-4 border border-slate-100">
+                                                        <h5 className="text-xs font-bold text-slate-400 capitalize mb-3 tracking-wider">Varian & Spesifikasi</h5>
                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
                                                             
                                                             {/* Render standar Varian (Warna, Ukuran) */}
@@ -189,7 +189,7 @@ export default function Show({ auth, order }) {
                                                 {/* Design Files Box */}
                                                 {designFiles && designFiles.length > 0 && (
                                                     <div>
-                                                        <h5 className="text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">File Desain Pelanggan</h5>
+                                                        <h5 className="text-xs font-bold text-slate-400 capitalize mb-2 tracking-wider">File Desain Pelanggan</h5>
                                                         <div className="flex flex-wrap gap-3">
                                                             {designFiles.map((file, idx) => (
                                                                 <a 
@@ -218,22 +218,22 @@ export default function Show({ auth, order }) {
                         <div className="space-y-6">
                             
                             {/* Card Info Pelanggan */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
                                     <User className="text-[#277cdd]" size={18} />
                                     <h3 className="font-bold text-slate-800">Informasi Pelanggan</h3>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase font-bold mb-1">Nama Lengkap</p>
+                                        <p className="text-xs text-slate-400 capitalize font-bold mb-1">Nama Lengkap</p>
                                         <p className="font-semibold text-slate-800">{order.customer_name}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase font-bold mb-1">Email</p>
+                                        <p className="text-xs text-slate-400 capitalize font-bold mb-1">Email</p>
                                         <p className="font-semibold text-slate-800">{order.customer_email}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase font-bold mb-1">No. WhatsApp</p>
+                                        <p className="text-xs text-slate-400 capitalize font-bold mb-1">No. WhatsApp</p>
                                         <a href={`https://wa.me/${order.customer_phone.replace(/\D/g, '')}`} target="_blank" className="font-semibold text-[#277cdd] hover:underline">
                                             {order.customer_phone}
                                         </a>
@@ -242,19 +242,19 @@ export default function Show({ auth, order }) {
                             </div>
 
                             {/* Card Pengiriman */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
                                     <MapPin className="text-[#277cdd]" size={18} />
                                     <h3 className="font-bold text-slate-800">Detail Pengiriman</h3>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase font-bold mb-1">Metode Pengiriman</p>
+                                        <p className="text-xs text-slate-400 capitalize font-bold mb-1">Metode Pengiriman</p>
                                         <p className="font-semibold text-slate-800">{order.shipping_courier} - {order.shipping_service}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase font-bold mb-1">Alamat Tujuan</p>
-                                        <p className="text-sm text-slate-600 leading-relaxed font-medium bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <p className="text-xs text-slate-400 capitalize font-bold mb-1">Alamat Tujuan</p>
+                                        <p className="text-sm text-slate-600 leading-relaxed font-medium bg-slate-50 p-3 rounded-lg border border-slate-100">
                                             {order.shipping_address}
                                         </p>
                                     </div>
@@ -262,7 +262,7 @@ export default function Show({ auth, order }) {
                             </div>
 
                             {/* Card Pembayaran */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
                                     <CreditCard className="text-[#277cdd]" size={18} />
                                     <h3 className="font-bold text-slate-800">Ringkasan Pembayaran</h3>

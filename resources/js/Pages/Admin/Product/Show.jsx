@@ -33,12 +33,12 @@ export default function Show({ auth, product }) {
                     </Link>
                     
                     <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${product.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize tracking-wider border ${product.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
                             {product.is_active ? 'Published' : 'Draft'}
                         </span>
                         <Link 
                             href={route('admin.product.edit', product.id)} 
-                            className="inline-flex items-center justify-center px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all"
+                            className="inline-flex items-center justify-center px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all"
                         >
                             <Edit3 size={16} className="mr-2" /> Edit Produk
                         </Link>
@@ -49,7 +49,7 @@ export default function Show({ auth, product }) {
                     
                     {/* --- LEFT: IMAGES --- */}
                     <div className="lg:col-span-5 space-y-4 sticky top-8">
-                        <div className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm aspect-square relative group">
+                        <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-sm aspect-square relative group">
                             <img src={product.thumbnail} alt={product.name} className="w-full h-full object-cover" />
                             
                             {/* Label Hemat di Gambar */}
@@ -71,7 +71,7 @@ export default function Show({ auth, product }) {
                             </div>
                         )}
                         
-                        <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs text-slate-500 flex items-center gap-2">
+                        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 text-xs text-slate-500 flex items-center gap-2">
                             <Calendar size={14} /> Terakhir update: {formatDate(product.updated_at)}
                         </div>
                     </div>
@@ -80,7 +80,7 @@ export default function Show({ auth, product }) {
                     <div className="lg:col-span-7 space-y-8">
                         
                         {/* Title & Price Section */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="bg-white p-8 rounded-lg border border-slate-200 shadow-sm">
                             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">{product.name}</h1>
                             
                             {/* REVISI TAMPILAN HARGA */}
@@ -104,7 +104,7 @@ export default function Show({ auth, product }) {
                             </div>
 
                             <div className="pt-6">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                                <h3 className="text-sm font-bold capitalize tracking-wider text-slate-400 mb-3 flex items-center gap-2">
                                     <Tag size={16} /> Deskripsi
                                 </h3>
                                 <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
@@ -115,8 +115,8 @@ export default function Show({ auth, product }) {
 
                         {/* Sizes */}
                         {product.available_sizes && product.available_sizes.length > 0 && (
-                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-2">
+                            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                                <h3 className="text-sm font-bold capitalize tracking-wider text-slate-900 mb-4 flex items-center gap-2">
                                     <Box size={18} className="text-blue-600" /> Ukuran Tersedia
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
@@ -131,8 +131,8 @@ export default function Show({ auth, product }) {
 
                         {/* Specs (Key-Value) */}
                         {product.specifications && product.specifications.length > 0 && (
-                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-2">
+                            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                                <h3 className="text-sm font-bold capitalize tracking-wider text-slate-900 mb-4 flex items-center gap-2">
                                     <Layers size={18} className="text-purple-600" /> Spesifikasi
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -148,13 +148,13 @@ export default function Show({ auth, product }) {
 
                         {/* Add-ons */}
                         {product.addons && product.addons.length > 0 && (
-                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-6 flex items-center gap-2">
+                            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                                <h3 className="text-sm font-bold capitalize tracking-wider text-slate-900 mb-6 flex items-center gap-2">
                                     <CheckCircle2 size={18} className="text-orange-500" /> Opsi Kustomisasi
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {product.addons.map((group, gIdx) => (
-                                        <div key={gIdx} className="bg-orange-50/50 rounded-xl p-5 border border-orange-100">
+                                        <div key={gIdx} className="bg-orange-50/50 rounded-lg p-5 border border-orange-100">
                                             <h4 className="font-bold text-orange-800 text-sm mb-3 pb-2 border-b border-orange-200/50">
                                                 {group.title}
                                             </h4>

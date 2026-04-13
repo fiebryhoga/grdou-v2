@@ -83,7 +83,7 @@ export default function Show({ order, clientKey }) {
             <GuestLayout>
                 <Head title={`Lunas - #${order.order_number}`} />
                 <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                    <div className="bg-white max-w-lg w-full rounded-3xl shadow-xl p-8 text-center animate-fade-in-up">
+                    <div className="bg-white max-w-lg w-full rounded-lg shadow-xl p-8 text-center animate-fade-in-up">
                         <div className="mb-6 flex justify-center">
                             <div className="bg-green-100 p-4 rounded-full">
                                 <FaCheckCircle className="text-6xl text-green-600" />
@@ -95,14 +95,14 @@ export default function Show({ order, clientKey }) {
                             Terima kasih, pesanan <strong>#{order.order_number}</strong> Anda sedang kami proses.
                         </p>
 
-                        <div className="bg-slate-50 rounded-xl p-6 border border-slate-100 mb-8 text-left">
+                        <div className="bg-slate-50 rounded-lg p-6 border border-slate-100 mb-8 text-left">
                             <div className="flex justify-between mb-2">
                                 <span className="text-slate-500">Tanggal Bayar</span>
                                 <span className="font-semibold">{formatDate(new Date())}</span>
                             </div>
                             <div className="flex justify-between mb-2">
                                 <span className="text-slate-500">Metode</span>
-                                <span className="font-semibold uppercase">{order.shipping_courier}</span>
+                                <span className="font-semibold capitalize">{order.shipping_courier}</span>
                             </div>
                             <div className="flex justify-between pt-4 border-t border-slate-200">
                                 <span className="font-bold text-slate-800">Total Bayar</span>
@@ -114,13 +114,13 @@ export default function Show({ order, clientKey }) {
                             <a 
                                 href={`https://wa.me/6281234567890?text=Halo admin, saya sudah bayar pesanan ${order.order_number}`} 
                                 target="_blank"
-                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition"
                             >
                                 <FaWhatsapp size={20} /> Konfirmasi ke Admin
                             </a>
                             <Link 
                                 href={route('katalog.index')} 
-                                className="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-50 transition"
+                                className="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-3 rounded-lg hover:bg-slate-50 transition"
                             >
                                 Kembali Belanja
                             </Link>
@@ -143,22 +143,22 @@ export default function Show({ order, clientKey }) {
                     <div className="lg:col-span-2 space-y-6">
                         
                         {/* Header Status */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex justify-between items-center">
+                        <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200 flex justify-between items-center">
                             <div>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Status Pesanan</p>
+                                <p className="text-xs font-bold text-slate-400 capitalize tracking-wide">Status Pesanan</p>
                                 <div className="flex items-center gap-2 mt-1">
                                     <FaClock className="text-orange-500" />
-                                    <span className="font-bold text-orange-600 text-lg uppercase">{order.status}</span>
+                                    <span className="font-bold text-orange-600 text-lg capitalize">{order.status}</span>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-xs font-bold text-slate-400 uppercase">Order ID</p>
+                                <p className="text-xs font-bold text-slate-400 capitalize">Order ID</p>
                                 <p className="font-mono font-bold text-slate-700">#{order.order_number}</p>
                             </div>
                         </div>
 
                         {/* Alamat Pengiriman */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
                             <h3 className="flex items-center gap-2 font-bold text-slate-800 mb-4 pb-2 border-b">
                                 <FaMapMarkerAlt className="text-blue-600" /> Informasi Pengiriman
                             </h3>
@@ -180,7 +180,7 @@ export default function Show({ order, clientKey }) {
                         </div>
 
                         {/* List Barang */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
                             <h3 className="flex items-center gap-2 font-bold text-slate-800 mb-4 pb-2 border-b">
                                 <FaBoxOpen className="text-blue-600" /> Rincian Item
                             </h3>
@@ -204,9 +204,9 @@ export default function Show({ order, clientKey }) {
 
                     {/* KOLOM KANAN: Tagihan & Action */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden sticky top-6">
+                        <div className="bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden sticky top-6">
                             <div className="bg-slate-900 p-6 text-center text-white">
-                                <p className="text-slate-400 text-xs font-bold uppercase mb-2">Total Tagihan</p>
+                                <p className="text-slate-400 text-xs font-bold capitalize mb-2">Total Tagihan</p>
                                 <h2 className="text-3xl font-extrabold">{formatIDR(order.total_price)}</h2>
                             </div>
                             
@@ -219,12 +219,12 @@ export default function Show({ order, clientKey }) {
                                     {order.status === 'pending' ? (
                                         <button 
                                             onClick={handlePayment}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2"
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2"
                                         >
                                             <FaCreditCard /> BAYAR SEKARANG
                                         </button>
                                     ) : (
-                                        <button disabled className="w-full bg-slate-200 text-slate-500 font-bold py-4 rounded-xl cursor-not-allowed">
+                                        <button disabled className="w-full bg-slate-200 text-slate-500 font-bold py-4 rounded-lg cursor-not-allowed">
                                             {order.status === 'cancelled' ? 'PESANAN DIBATALKAN' : 'SUDAH DIBAYAR'}
                                         </button>
                                     )}
@@ -234,7 +234,7 @@ export default function Show({ order, clientKey }) {
                                     <a 
                                         href={`https://wa.me/6281234567890?text=Halo, saya butuh bantuan untuk order #${order.order_number}`}
                                         target="_blank"
-                                        className="block w-full text-center py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm transition"
+                                        className="block w-full text-center py-3 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm transition"
                                     >
                                         Bantuan via WhatsApp
                                     </a>

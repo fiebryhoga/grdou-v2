@@ -148,21 +148,21 @@ export default function Edit({ auth, product }) {
                     <div className="lg:col-span-2 space-y-8">
                         
                         {/* 1. Informasi Dasar */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
                             <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                                 <span className="w-1 h-6 bg-blue-600 rounded-full"></span> Informasi Dasar
                             </h2>
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Produk</label>
-                                    <input type="text" className="w-full rounded-xl border-slate-300 focus:border-blue-500 focus:ring-blue-500" 
+                                    <input type="text" className="w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500" 
                                         value={data.name} onChange={e => setData('name', e.target.value)} 
                                     />
                                     {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-1">Deskripsi Lengkap</label>
-                                    <textarea rows="5" className="w-full rounded-xl border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                                    <textarea rows="5" className="w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                                         value={data.description} onChange={e => setData('description', e.target.value)}
                                     />
                                 </div>
@@ -170,7 +170,7 @@ export default function Edit({ auth, product }) {
                         </div>
 
                         {/* 2. Spesifikasi Teknis */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                                     <span className="w-1 h-6 bg-purple-600 rounded-full"></span> Spesifikasi
@@ -180,9 +180,9 @@ export default function Edit({ auth, product }) {
                             <div className="space-y-3">
                                 {data.specifications.map((spec, index) => (
                                     <div key={index} className="flex gap-3">
-                                        <input type="text" placeholder="Label" className="w-1/3 rounded-xl border-slate-300 text-sm focus:border-purple-500 focus:ring-purple-500"
+                                        <input type="text" placeholder="Label" className="w-1/3 rounded-lg border-slate-300 text-sm focus:border-purple-500 focus:ring-purple-500"
                                             value={spec.key} onChange={e => updateSpec(index, 'key', e.target.value)} />
-                                        <input type="text" placeholder="Nilai" className="w-full rounded-xl border-slate-300 text-sm focus:border-purple-500 focus:ring-purple-500"
+                                        <input type="text" placeholder="Nilai" className="w-full rounded-lg border-slate-300 text-sm focus:border-purple-500 focus:ring-purple-500"
                                             value={spec.value} onChange={e => updateSpec(index, 'value', e.target.value)} />
                                         <button type="button" onClick={() => removeSpec(index)} className="text-slate-400 hover:text-red-500 p-2">
                                             <Trash2 size={18} />
@@ -193,7 +193,7 @@ export default function Edit({ auth, product }) {
                         </div>
 
                         {/* 3. Add-ons */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                                     <span className="w-1 h-6 bg-orange-500 rounded-full"></span> Add-ons
@@ -203,13 +203,13 @@ export default function Edit({ auth, product }) {
                             
                             <div className="space-y-6">
                                 {data.addons.map((group, gIndex) => (
-                                    <div key={gIndex} className="bg-slate-50 rounded-xl p-4 border border-slate-200 relative group">
+                                    <div key={gIndex} className="bg-slate-50 rounded-lg p-4 border border-slate-200 relative group">
                                         <button type="button" onClick={() => removeAddonGroup(gIndex)} className="absolute top-4 right-4 text-slate-400 hover:text-red-500">
                                             <X size={18} />
                                         </button>
                                         
                                         <div className="mb-4 pr-8">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Nama Grup</label>
+                                            <label className="text-xs font-bold text-slate-500 capitalize">Nama Grup</label>
                                             <input type="text" className="block w-full bg-transparent border-0 border-b-2 border-slate-300 focus:border-orange-500 focus:ring-0 px-0 text-slate-900 font-semibold"
                                                 value={group.title} onChange={e => updateAddonGroupTitle(gIndex, e.target.value)}
                                             />
@@ -241,7 +241,7 @@ export default function Edit({ auth, product }) {
                     <div className="space-y-8">
                         
                         {/* 4. Status */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
                             <div className="flex items-center justify-between mb-6">
                                 <label className="text-sm font-semibold text-slate-700">Status</label>
                                 <div className="flex items-center gap-2">
@@ -257,38 +257,38 @@ export default function Edit({ auth, product }) {
                                     </button>
                                 </div>
                             </div>
-                            <button disabled={processing} className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                            <button disabled={processing} className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
                                 <Save size={18} />
                                 {processing ? 'Menyimpan...' : 'Update Produk'}
                             </button>
                         </div>
 
                         {/* 5. Harga */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h2 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Harga</h2>
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                            <h2 className="text-sm font-bold text-slate-900 mb-4 capitalize tracking-wider">Harga</h2>
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-xs font-semibold text-slate-900 mb-1 block">Harga Jual (Net)</label>
-                                    <input type="number" className="w-full rounded-xl border-slate-300 focus:border-blue-500 focus:ring-blue-500 font-bold text-slate-900"
+                                    <input type="number" className="w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500 font-bold text-slate-900"
                                         value={data.base_price} onChange={e => setData('base_price', e.target.value)} />
                                     {errors.base_price && <span className="text-red-500 text-xs">{errors.base_price}</span>}
                                 </div>
                                 <div>
                                     <label className="text-xs font-semibold text-slate-500 mb-1 block">Harga Coret (Opsional)</label>
-                                    <input type="number" className="w-full rounded-xl border-slate-300 focus:border-red-500 focus:ring-red-500 text-slate-500"
+                                    <input type="number" className="w-full rounded-lg border-slate-300 focus:border-red-500 focus:ring-red-500 text-slate-500"
                                         value={data.discount_price} onChange={e => setData('discount_price', e.target.value)} />
                                 </div>
                             </div>
                         </div>
 
                         {/* 6. Media (Thumbnail & Gallery) */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h2 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Media</h2>
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                            <h2 className="text-sm font-bold text-slate-900 mb-4 capitalize tracking-wider">Media</h2>
                             
                             {/* THUMBNAIL */}
                             <div className="mb-6">
                                 <label className="text-xs font-semibold text-slate-500 mb-2 block">Thumbnail Utama</label>
-                                <div className="relative aspect-square rounded-xl overflow-hidden border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 transition-colors group cursor-pointer">
+                                <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 transition-colors group cursor-pointer">
                                     {data.thumbnail ? (
                                         <img src={URL.createObjectURL(data.thumbnail)} className="w-full h-full object-cover" />
                                     ) : (
@@ -346,8 +346,8 @@ export default function Edit({ auth, product }) {
                         </div>
 
                         {/* 7. Ukuran */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h2 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Ukuran Tersedia</h2>
+                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                            <h2 className="text-sm font-bold text-slate-900 mb-4 capitalize tracking-wider">Ukuran Tersedia</h2>
                             <div className="flex flex-wrap gap-2">
                                 {sizesList.map((size) => (
                                     <button

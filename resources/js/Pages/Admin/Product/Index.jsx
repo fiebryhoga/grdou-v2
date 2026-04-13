@@ -77,7 +77,7 @@ export default function Index({ auth, products, filters }) {
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+                                className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
                                 placeholder="Cari nama produk..."
                             />
                         </div>
@@ -85,7 +85,7 @@ export default function Index({ auth, products, filters }) {
                         {/* Add Button */}
                         <Link
                             href={route('admin.product.create')}
-                            className="inline-flex items-center justify-center px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 transition-all transform hover:-translate-y-0.5"
+                            className="inline-flex items-center justify-center px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 shadow-lg shadow-gray-200 transition-all transform hover:-translate-y-0.5"
                         >
                             <Plus size={18} className="mr-2" /> Baru
                         </Link>
@@ -93,16 +93,16 @@ export default function Index({ auth, products, filters }) {
                 </div>
 
                 {/* Table Container */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50/50">
                                 <tr>
-                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Produk</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Harga</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 capitalize tracking-wider">Produk</th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 capitalize tracking-wider">Harga</th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 capitalize tracking-wider">Status</th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 capitalize tracking-wider">Tanggal</th>
+                                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 capitalize tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-100">

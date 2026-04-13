@@ -40,7 +40,7 @@ const LayananSection = ({ produks = [] }) => {
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
                 
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
+                    <span className="text-[#277cdd] font-bold tracking-widest capitalize text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
                         Layanan Kami
                     </span>
                     <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-5 leading-tight tracking-tight">
@@ -55,11 +55,11 @@ const LayananSection = ({ produks = [] }) => {
                     {displayData.slice(0, 3).map((item) => (
                         <div 
                             key={item.id} 
-                            className="group bg-white rounded-3xl border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-300 flex flex-col overflow-hidden"
+                            className="group bg-white rounded-lg border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-300 flex flex-col overflow-hidden"
                         >
                             <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
                                 {item.label && (
-                                    <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm text-gray-900 text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full shadow-sm">
+                                    <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm text-gray-900 text-[11px] font-bold capitalize tracking-wide px-3 py-1.5 rounded-full shadow-sm">
                                         ✨ {item.label}
                                     </div>
                                 )}
@@ -85,7 +85,7 @@ const LayananSection = ({ produks = [] }) => {
                                 
                                 <div className="flex items-center justify-between pt-5 border-t border-gray-100 mt-auto">
                                     <div>
-                                        <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">
+                                        <p className="text-[11px] text-gray-400 font-medium capitalize tracking-wider mb-1">
                                             Mulai dari
                                         </p>
                                         <p className="text-[#277cdd] font-bold text-lg">

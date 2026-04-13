@@ -69,7 +69,7 @@ export default function Catalog({ produks = [] }) {
                 <div className="absolute bottom-0 left-10 w-72 h-72 bg-blue-100/40 rounded-full blur-3xl z-0 pointer-events-none"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-5">
+                    <span className="text-[#277cdd] font-bold tracking-widest capitalize text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-5">
                         Katalog Lengkap
                     </span>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">
@@ -126,11 +126,11 @@ export default function Catalog({ produks = [] }) {
                             {filteredProduks.map((item) => (
                                 <div 
                                     key={item.id} 
-                                    className="group bg-white rounded-3xl border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-300 flex flex-col overflow-hidden relative"
+                                    className="group bg-white rounded-lg border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-300 flex flex-col overflow-hidden relative"
                                 >
                                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
                                         {getLabel(item) && (
-                                            <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm text-gray-900 text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full shadow-sm">
+                                            <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm text-gray-900 text-[11px] font-bold capitalize tracking-wide px-3 py-1.5 rounded-full shadow-sm">
                                                 ✨ {getLabel(item)}
                                             </div>
                                         )}
@@ -147,7 +147,7 @@ export default function Catalog({ produks = [] }) {
                                     </div>
 
                                     <div className="p-6 sm:p-8 flex flex-col flex-grow relative z-10">
-                                        <span className="text-[10px] font-bold text-[#277cdd] uppercase tracking-wider mb-2 block">
+                                        <span className="text-[10px] font-bold text-[#277cdd] capitalize tracking-wider mb-2 block">
                                             {getCategory(item)}
                                         </span>
                                         
@@ -161,7 +161,7 @@ export default function Catalog({ produks = [] }) {
                                         
                                         <div className="flex items-center justify-between pt-5 border-t border-gray-100 mt-auto">
                                             <div>
-                                                <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">Mulai Dari</p>
+                                                <p className="text-[11px] text-gray-400 font-medium capitalize tracking-wider mb-1">Mulai Dari</p>
                                                 <p className="text-[#277cdd] font-bold text-lg">
                                                     {formatIDR(item.price || item.base_price)}
                                                 </p>
@@ -180,7 +180,7 @@ export default function Catalog({ produks = [] }) {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-24 bg-gray-50 rounded-3xl border border-gray-100">
+                        <div className="text-center py-24 bg-gray-50 rounded-lg border border-gray-100">
                             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-sm text-gray-300 mb-6">
                                 <FiSearch size={32} />
                             </div>
@@ -193,7 +193,7 @@ export default function Catalog({ produks = [] }) {
 
             <div className="bg-white border-t border-gray-100 py-16">
                 <div className="max-w-4xl mx-auto px-6 text-center">
-                    <div className="bg-blue-50 rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+                    <div className="bg-blue-50 rounded-lg p-8 sm:p-12 relative overflow-hidden">
                         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#277cdd]/10 rounded-full blur-2xl"></div>
                         <div className="relative z-10">
                             <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">

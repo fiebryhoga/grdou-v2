@@ -38,7 +38,7 @@ export default function Dashboard({ auth }) {
                         <h3 className="text-2xl font-extrabold text-slate-900">Selamat Datang, {auth.user.name}! 👋</h3>
                         <p className="text-slate-500 mt-1">Pantau semua pesanan konveksi GR - DOU hari ini.</p>
                     </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-lg shadow-blue-200 transition-all active:scale-95">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold text-sm shadow-lg shadow-blue-200 transition-all active:scale-95">
                         + Tambah Pesanan Baru
                     </button>
                 </div>
@@ -48,14 +48,14 @@ export default function Dashboard({ auth }) {
                     {stats.map((item, index) => (
                         <div key={index} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-4">
-                                <div className={`p-3 rounded-2xl ${item.bg}`}>
+                                <div className={`p-3 rounded-lg ${item.bg}`}>
                                     <item.icon className={`h-6 w-6 ${item.color}`} />
                                 </div>
                                 <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg flex items-center gap-1">
                                     <TrendingUp size={12} /> +12%
                                 </span>
                             </div>
-                            <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">{item.name}</p>
+                            <p className="text-slate-500 text-sm font-medium capitalize tracking-wider">{item.name}</p>
                             <h4 className="text-3xl font-black text-slate-900 mt-1">{item.value}</h4>
                         </div>
                     ))}
@@ -71,7 +71,7 @@ export default function Dashboard({ auth }) {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50/50 text-slate-400 text-[10px] uppercase tracking-[0.1em] font-bold">
+                                <thead className="bg-slate-50/50 text-slate-400 text-[10px] capitalize tracking-[0.1em] font-bold">
                                     <tr>
                                         <th className="px-6 py-4">ID Order</th>
                                         <th className="px-6 py-4">Pelanggan</th>
@@ -88,7 +88,7 @@ export default function Dashboard({ auth }) {
                                             <td className="px-6 py-4 text-slate-600">{order.item}</td>
                                             <td className="px-6 py-4 font-medium text-slate-700">{order.qty}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.color}`}>
+                                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold capitalize tracking-wider ${order.color}`}>
                                                     {order.status}
                                                 </span>
                                             </td>
@@ -103,14 +103,14 @@ export default function Dashboard({ auth }) {
                     <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6">
                         <h3 className="font-bold text-slate-800 mb-6">Info Penting</h3>
                         <div className="space-y-4">
-                            <div className="flex gap-4 p-4 bg-red-50 rounded-2xl border border-red-100">
+                            <div className="flex gap-4 p-4 bg-red-50 rounded-lg border border-red-100">
                                 <AlertCircle className="text-red-600 shrink-0" />
                                 <div>
                                     <p className="text-sm font-bold text-red-900">Stok Cat Putih Tipis!</p>
                                     <p className="text-xs text-red-700 mt-0.5">Sisa 2 KG, segera restock untuk sablon minggu depan.</p>
                                 </div>
                             </div>
-                            <div className="flex gap-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                            <div className="flex gap-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
                                 <Clock className="text-blue-600 shrink-0" />
                                 <div>
                                     <p className="text-sm font-bold text-blue-900">Deadline #GR001</p>

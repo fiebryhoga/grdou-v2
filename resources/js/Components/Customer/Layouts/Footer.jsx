@@ -70,7 +70,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
                     <div className="lg:col-span-4 space-y-6">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-3xl font-extrabold tracking-tighter text-white uppercase">
+                            <h2 className="text-3xl font-extrabold tracking-tighter text-white capitalize">
                                 {brandFirst} <span className="text-[#277cdd]">{brandRest}</span>
                             </h2>
                         </div>

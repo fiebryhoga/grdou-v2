@@ -167,7 +167,7 @@ export default function Show({ product }) {
                         <span className="text-gray-900 truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
                         
                         {isEditing && (
-                            <span className="ml-4 bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-orange-200 shadow-sm animate-pulse">
+                            <span className="ml-4 bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest capitalize border border-orange-200 shadow-sm animate-pulse">
                                 Mode Edit
                             </span>
                         )}
@@ -178,7 +178,7 @@ export default function Show({ product }) {
                             
                             <div className="lg:col-span-5 p-6 sm:p-10 border-b lg:border-b-0 lg:border-r border-gray-100 bg-gray-50/50">
                                 <div className="sticky top-28 space-y-6">
-                                    <div className="rounded-3xl overflow-hidden border border-gray-200 bg-white aspect-square relative group shadow-sm">
+                                    <div className="rounded-lg overflow-hidden border border-gray-200 bg-white aspect-square relative group shadow-sm">
                                         <img 
                                             src={mainImage} 
                                             alt={product.name} 
@@ -190,7 +190,7 @@ export default function Show({ product }) {
                                     <div className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                         <button 
                                             onClick={() => setMainImage(product.thumbnail)} 
-                                            className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${mainImage === product.thumbnail ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
+                                            className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${mainImage === product.thumbnail ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
                                         >
                                             <img src={product.thumbnail} className="w-full h-full object-cover" />
                                         </button>
@@ -199,7 +199,7 @@ export default function Show({ product }) {
                                             <button 
                                                 key={idx} 
                                                 onClick={() => setMainImage(img)} 
-                                                className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
+                                                className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${mainImage === img ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
                                             >
                                                 <img src={img} className="w-full h-full object-cover" />
                                             </button>
@@ -219,9 +219,9 @@ export default function Show({ product }) {
                                     </p>
                                 </div>
                                 
-                                <div className="bg-[#277cdd]/5 p-6 sm:p-8 rounded-3xl border border-[#277cdd]/10 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 shadow-sm">
+                                <div className="bg-[#277cdd]/5 p-6 sm:p-8 rounded-lg border border-[#277cdd]/10 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 shadow-sm">
                                     <div>
-                                        <p className="text-[11px] text-[#277cdd] font-bold uppercase tracking-widest mb-1">Harga Satuan</p>
+                                        <p className="text-[11px] text-[#277cdd] font-bold capitalize tracking-widest mb-1">Harga Satuan</p>
                                         <span className="text-3xl font-black text-[#277cdd]">{formatIDR(unitPrice)}</span>
                                         {Object.keys(selectedAddons).length > 0 && (
                                             <p className="text-[10px] text-[#277cdd] font-bold mt-2 bg-white px-3 py-1 rounded-full shadow-sm inline-block">
@@ -231,7 +231,7 @@ export default function Show({ product }) {
                                     </div>
                                     <div className="hidden sm:block w-px h-16 bg-[#277cdd]/20"></div>
                                     <div className="text-left sm:text-right">
-                                        <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-1">Estimasi Total ({totalQty} pcs)</p>
+                                        <p className="text-[11px] text-gray-500 font-bold capitalize tracking-widest mb-1">Estimasi Total ({totalQty} pcs)</p>
                                         <span className="text-3xl font-black text-gray-900">{formatIDR(unitPrice * totalQty)}</span>
                                     </div>
                                 </div>
@@ -239,7 +239,7 @@ export default function Show({ product }) {
                                 {product.available_sizes && product.available_sizes.length > 0 && (
                                     <div className="mb-10">
                                         <div className="flex items-center justify-between mb-5">
-                                            <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                            <h3 className="text-sm font-extrabold text-gray-900 capitalize tracking-widest flex items-center gap-2">
                                                 <FaRulerCombined className="text-gray-400" /> Pilih Ukuran
                                             </h3>
                                             <span className="text-xs font-bold text-gray-600 bg-gray-100 px-4 py-1.5 rounded-full border border-gray-200">
@@ -251,13 +251,13 @@ export default function Show({ product }) {
                                             {product.available_sizes.map((size) => (
                                                 <div 
                                                     key={size} 
-                                                    className={`relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 ${sizeQuantities[size] > 0 ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
+                                                    className={`relative flex flex-col items-center p-4 rounded-lg border-2 transition-all duration-300 ${sizeQuantities[size] > 0 ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
                                                 >
                                                     <span className={`text-base font-black mb-4 block ${sizeQuantities[size] > 0 ? 'text-[#277cdd]' : 'text-gray-700'}`}>
                                                         {size.toUpperCase()}
                                                     </span>
                                                     
-                                                    <div className="flex items-center justify-between w-full bg-white rounded-xl border border-gray-200 p-1.5 shadow-sm">
+                                                    <div className="flex items-center justify-between w-full bg-white rounded-lg border border-gray-200 p-1.5 shadow-sm">
                                                         <button 
                                                             type="button"
                                                             onClick={() => handleSizeQtyChange(size, -1)} 
@@ -293,10 +293,10 @@ export default function Show({ product }) {
                                 {product.addons && product.addons.length > 0 && (
                                     <div className="mb-10 space-y-6">
                                         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                                            <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                            <h3 className="text-sm font-extrabold text-gray-900 capitalize tracking-widest flex items-center gap-2">
                                                 <FaCheck className="text-gray-400" /> Kustomisasi
                                             </h3>
-                                            <span className="text-[10px] text-red-500 font-bold bg-red-50 px-3 py-1 rounded-full border border-red-100 uppercase tracking-widest">
+                                            <span className="text-[10px] text-red-500 font-bold bg-red-50 px-3 py-1 rounded-full border border-red-100 capitalize tracking-widest">
                                                 * Wajib Dipilih
                                             </span>
                                         </div>
@@ -306,7 +306,7 @@ export default function Show({ product }) {
                                             return (
                                                 <div key={idx} className="space-y-4">
                                                     <div className="flex justify-between items-center">
-                                                        <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{group.title}</h4>
+                                                        <h4 className="text-[11px] font-bold text-gray-500 capitalize tracking-widest">{group.title}</h4>
                                                         {!isGroupSelected && <span className="text-[10px] text-red-500 font-bold animate-pulse">Pilih salah satu!</span>}
                                                     </div>
                                                     
@@ -316,7 +316,7 @@ export default function Show({ product }) {
                                                             return (
                                                                 <label 
                                                                     key={optIdx} 
-                                                                    className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
+                                                                    className={`flex items-start gap-4 p-5 rounded-lg border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
                                                                 >
                                                                     <div className="pt-0.5">
                                                                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-[#277cdd]' : 'border-gray-300'}`}>
@@ -350,7 +350,7 @@ export default function Show({ product }) {
 
                                 <div className="mb-10">
                                     <div className="flex items-center justify-between mb-5">
-                                        <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                        <h3 className="text-sm font-extrabold text-gray-900 capitalize tracking-widest flex items-center gap-2">
                                             <FaImage className="text-gray-400" /> Upload Desain
                                         </h3>
                                         <span className={`text-xs font-bold px-4 py-1.5 rounded-full border ${designFiles.length >= 5 ? 'bg-red-50 text-red-600 border-red-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
@@ -361,9 +361,9 @@ export default function Show({ product }) {
                                     {designFiles.length > 0 && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                                             {designFiles.map((file, idx) => (
-                                                <div key={idx} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl shadow-sm group">
+                                                <div key={idx} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm group">
                                                     <div className="flex items-center gap-4 overflow-hidden">
-                                                        <div className="w-10 h-10 bg-blue-50 text-[#277cdd] rounded-xl flex items-center justify-center flex-shrink-0">
+                                                        <div className="w-10 h-10 bg-blue-50 text-[#277cdd] rounded-lg flex items-center justify-center flex-shrink-0">
                                                             <FaImage size={18} />
                                                         </div>
                                                         <div className="min-w-0 pr-2">
@@ -383,7 +383,7 @@ export default function Show({ product }) {
                                     )}
 
                                     {designFiles.length < 5 && (
-                                        <div className="relative border-2 border-dashed border-gray-300 rounded-3xl p-10 text-center bg-gray-50/50 hover:bg-[#277cdd]/5 hover:border-[#277cdd]/40 transition-colors cursor-pointer group">
+                                        <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-10 text-center bg-gray-50/50 hover:bg-[#277cdd]/5 hover:border-[#277cdd]/40 transition-colors cursor-pointer group">
                                             <input 
                                                 type="file" 
                                                 multiple 
@@ -413,7 +413,7 @@ export default function Show({ product }) {
                                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200 shadow-none'}`}
                                     >
                                         {isEditing ? <FaSave size={20} /> : <FaShoppingCart size={20} />} 
-                                        <span className="tracking-widest uppercase text-sm">
+                                        <span className="tracking-widest capitalize text-sm">
                                             {isEditing ? 'Simpan Perubahan' : 'Masukkan Keranjang'}
                                         </span>
                                     </button>
