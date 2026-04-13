@@ -1,16 +1,14 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { FiArrowRight, FiCheckCircle } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 
 const LayananSection = ({ produks = [] }) => {
-    // --- DATA DUMMY (FALLBACK) ---
-    // Akan ditampilkan jika data 'produks' dari database kosong/null
     const dummyProduks = [
         {
             id: 1,
             nama: "Sablon Kaos Custom",
             deskripsi: "Sablon plastisol, rubber, dan DTF dengan kualitas premium. Cocok untuk event, komunitas, atau brand clothing Anda.",
-            gambar: "/assets/images/home/layanan/kaos.jpg", // Pastikan gambar ini ada, atau fallback akan jalan
+            gambar: "/assets/images/home/layanan/kaos.jpg",
             harga_mulai: "Rp 45.000",
             label: "Terlaris"
         },
@@ -32,80 +30,73 @@ const LayananSection = ({ produks = [] }) => {
         }
     ];
 
-    // Gunakan data dari props jika ada, jika tidak gunakan dummy
-    const displayData = produks.length > 0 ? produks : dummyProduks;
+    const displayData = produks && produks.length > 0 ? produks : dummyProduks;
 
     return (
-        <section className="py-24 bg-slate-50 relative overflow-hidden" id="layanan">
-            {/* Dekorasi Background Latar Belakang */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-50 z-0 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-slate-200 rounded-full blur-3xl opacity-50 z-0 pointer-events-none"></div>
+        <section className="py-24 bg-white relative overflow-hidden" id="layanan">
+            <div className="absolute top-0 left-0 -ml-32 -mt-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 -mr-32 -mb-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
                 
-                {/* --- Judul Section --- */}
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-[#277cdd] font-bold tracking-wider uppercase text-sm bg-blue-100 px-4 py-1.5 rounded-full inline-block mb-4">
+                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
                         Layanan Kami
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
-                        Solusi Produksi <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#277cdd] to-blue-500">Pakaian Terbaik</span> Anda
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-5 leading-tight tracking-tight">
+                        Solusi Produksi <span className="text-[#277cdd]">Pakaian Terbaik</span> Anda
                     </h2>
-                    <p className="text-slate-600 text-base md:text-lg">
-                        Kami menyediakan berbagai pilihan layanan konveksi dan sablon untuk memenuhi segala kebutuhan fashion, seragam, dan merchandise Anda.
+                    <p className="text-gray-500 text-base leading-relaxed">
+                        Kami menyediakan berbagai pilihan layanan konveksi dan sablon untuk memenuhi segala kebutuhan fashion, seragam, dan merchandise Anda dengan kualitas premium.
                     </p>
                 </div>
 
-                {/* --- Grid Layanan --- */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {displayData.slice(0, 3).map((item) => (
                         <div 
                             key={item.id} 
-                            className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 overflow-hidden flex flex-col transform hover:-translate-y-1"
+                            className="group bg-white rounded-3xl border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-300 flex flex-col overflow-hidden"
                         >
-                            {/* Gambar Card */}
-                            <div className="relative h-64 overflow-hidden bg-slate-100">
+                            <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
                                 {item.label && (
-                                    <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                    <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm text-gray-900 text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full shadow-sm">
                                         ✨ {item.label}
                                     </div>
                                 )}
                                 <img
-                                    src={item.gambar}
-                                    alt={item.nama}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    src={item.gambar || (item.image ? `/storage/${item.image}` : null)}
+                                    alt={item.nama || item.name}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {
                                         e.target.onerror = null; 
-                                        e.target.src = "https://placehold.co/600x400/eeeeee/999999?text=Gambar+Layanan";
+                                        e.target.src = "https://placehold.co/600x400/f8fafc/94a3b8?text=Gambar+Produk";
                                     }}
                                 />
-                                {/* Overlay Gradient saat hover */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
 
-                            {/* Konten Card */}
-                            <div className="p-6 flex flex-col flex-grow">
-                                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#277cdd] transition-colors">
-                                    {item.nama}
+                            <div className="p-6 sm:p-8 flex flex-col flex-grow">
+                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#277cdd] transition-colors duration-300 line-clamp-1">
+                                    {item.nama || item.name}
                                 </h3>
-                                <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow">
-                                    {item.deskripsi}
+                                <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
+                                    {item.deskripsi || item.description}
                                 </p>
                                 
-                                {/* Bagian Bawah Card (Harga & Tombol) */}
-                                <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                                <div className="flex items-center justify-between pt-5 border-t border-gray-100 mt-auto">
                                     <div>
-                                        <p className="text-xs text-slate-400 font-medium">Mulai dari</p>
+                                        <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">
+                                            Mulai dari
+                                        </p>
                                         <p className="text-[#277cdd] font-bold text-lg">
-                                            {item.harga_mulai || "Hubungi Kami"}
+                                            {item.harga_mulai || (item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : "Hubungi Kami")}
                                         </p>
                                     </div>
                                     <Link 
-                                        href={route('katalog.show', item.id || 1)}
-                                        className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#277cdd] group-hover:text-white transition-all duration-300"
-                                        aria-label="Lihat Detail"
+                                        href={route('katalog.show', item.id)}
+                                        className="w-10 h-10 rounded-full bg-[#277cdd]/10 flex items-center justify-center text-[#277cdd] group-hover:bg-[#277cdd] group-hover:text-white transition-all duration-300"
                                     >
-                                        <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" size={20}/>
+                                        <FiArrowRight className="transform group-hover:translate-x-0.5 transition-transform" size={18}/>
                                     </Link>
                                 </div>
                             </div>
@@ -113,14 +104,13 @@ const LayananSection = ({ produks = [] }) => {
                     ))}
                 </div>
 
-                {/* --- Tombol Lihat Semua --- */}
-                <div className="text-center mt-16">
+                <div className="text-center mt-14">
                     <Link 
                         href={route('katalog.index')} 
-                        className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 font-bold py-3.5 px-8 rounded-full hover:bg-slate-50 hover:text-[#277cdd] hover:border-[#277cdd] transition-all duration-300 shadow-sm"
+                        className="inline-flex items-center gap-2 bg-white text-gray-700 border border-gray-200 font-semibold py-3.5 px-8 rounded-full hover:bg-gray-50 hover:text-[#277cdd] hover:border-[#277cdd]/30 transition-all duration-300 shadow-sm"
                     >
-                        Lihat Katalog Lengkap
-                        <FiArrowRight />
+                        Lihat Semua Layanan
+                        <FiArrowRight size={18} className="text-gray-400" />
                     </Link>
                 </div>
                 

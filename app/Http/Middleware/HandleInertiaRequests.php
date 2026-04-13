@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\WebsiteConfig; // Tambahkan import ini
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache; // Tambahkan import ini
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -31,23 +33,30 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            
             'auth' => [
                 'user' => $request->user(),
             ],
-            // Ambil notifikasi langsung dari DB untuk Navbar
-                'notifications' => $request->user() 
+
+            // Ambil notifikasi langsung dari DB untuk Navbar (hanya jika user login)
+            'notifications' => $request->user() 
                 ? \App\Models\Activity::latest()->take(10)->get()->map(fn($n) => [
                     'user_name' => $n->user_name,
-                    'message' => $n->message,
-                    'type' => $n->type,
-                    'path' => $n->path,
-                    'time' => $n->created_at->diffForHumans(),
+                    'message'   => $n->message,
+                    'type'      => $n->type,
+                    'path'      => $n->path,
+                    'time'      => $n->created_at->diffForHumans(),
                 ]) 
                 : [],
-            // Pastikan flash selalu punya default object agar React tidak crash
+            
+            // Konfigurasi website menggunakan Cache untuk performa yang lebih ringan
+            'website_config' => Cache::rememberForever('website_config', function () {
+                return WebsiteConfig::first();
+            }),
+                
             'flash' => [
                 'message' => $request->session()->get('message'),
-                'error' => $request->session()->get('error'),
+                'error'   => $request->session()->get('error'),
             ],
         ];
     }

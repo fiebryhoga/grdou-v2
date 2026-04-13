@@ -3,16 +3,13 @@ import { Head, Link, router } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useCart } from '@/Contexts/CartContext';
 import { 
-    FaShoppingCart, FaCheck, FaInfoCircle, FaPlus, 
+    FaShoppingCart, FaCheck, FaPlus, 
     FaMinus, FaRulerCombined, FaImage, FaTrash, FaSave 
 } from 'react-icons/fa';
 
 export default function Show({ product }) {
     const { addToCart, editItemData, setItemToEdit } = useCart(); 
     
-    // --- STATE MANAGEMENT ---
-    
-    // 1. Size Quantities (Pastikan aman jika available_sizes kosong/null)
     const [sizeQuantities, setSizeQuantities] = useState(() => {
         const initial = {};
         if (product.available_sizes && Array.isArray(product.available_sizes)) {
@@ -32,13 +29,11 @@ export default function Show({ product }) {
 
     const formatIDR = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
 
-    // --- EFFECT: LOAD DATA EDIT (JIKA ADA) ---
     useEffect(() => {
         if (editItemData && editItemData.id === product.id) {
             setIsEditing(true);
             setEditIndex(editItemData.indexInCart);
 
-            // 1. Restore Sizes
             if (editItemData.variant?.sizes) {
                 setSizeQuantities(prev => ({
                     ...prev,
@@ -46,7 +41,6 @@ export default function Show({ product }) {
                 }));
             }
 
-            // 2. Restore Addons
             if (editItemData.variant?.addons && product.addons) {
                 const restoredAddons = {};
                 editItemData.variant.addons.forEach(addon => {
@@ -60,20 +54,16 @@ export default function Show({ product }) {
                 setSelectedAddons(restoredAddons);
             }
 
-            // 3. Restore Files
             if (editItemData.designFiles && Array.isArray(editItemData.designFiles)) {
                 setDesignFiles(editItemData.designFiles);
             }
         }
     }, [editItemData, product.id, product.addons]);
 
-    // --- EFFECT: HITUNG TOTAL QTY & HARGA SATUAN ---
     useEffect(() => {
-        // Hitung total quantity
         const qty = Object.values(sizeQuantities).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
         setTotalQty(qty);
 
-        // Hitung tambahan harga dari Addons
         let addonTotal = 0;
         Object.values(selectedAddons).forEach(option => {
             if (option && option.price) addonTotal += parseFloat(option.price);
@@ -81,8 +71,6 @@ export default function Show({ product }) {
         
         setUnitPrice(parseFloat(product.base_price) + addonTotal);
     }, [sizeQuantities, selectedAddons, product.base_price]);
-
-    // --- HANDLERS ---
     
     const handleSizeQtyChange = (size, delta) => {
         setSizeQuantities(prev => {
@@ -104,7 +92,6 @@ export default function Show({ product }) {
         setSelectedAddons(prev => ({ ...prev, [groupTitle]: option }));
     };
 
-    // Handler Upload File
     const handleFileChange = (e) => {
         const newFiles = Array.from(e.target.files);
         const combinedFiles = [...designFiles, ...newFiles];
@@ -115,7 +102,6 @@ export default function Show({ product }) {
         }
 
         setDesignFiles(combinedFiles);
-        // Reset input value agar file yang sama bisa diupload ulang jika dihapus
         e.target.value = null; 
     };
 
@@ -129,7 +115,6 @@ export default function Show({ product }) {
             return;
         }
 
-        // Validasi Addons Wajib
         if (product.addons && product.addons.length > 0) {
             const missingAddons = product.addons.filter(group => !selectedAddons[group.title]);
             if (missingAddons.length > 0) {
@@ -139,14 +124,12 @@ export default function Show({ product }) {
             }
         }
 
-        // Filter ukuran yang quantity-nya lebih dari 0
         const selectedSizes = Object.fromEntries(
             Object.entries(sizeQuantities).filter(([_, qty]) => qty > 0)
         );
 
         const addonsArray = Object.values(selectedAddons);
 
-        // Eksekusi fungsi context Cart
         addToCart(
             product, 
             totalQty, 
@@ -162,7 +145,7 @@ export default function Show({ product }) {
     };
 
     const handleCancelEdit = () => {
-        setItemToEdit(null); // Clear context
+        setItemToEdit(null); 
         router.visit(route('cart.index'));
     };
 
@@ -170,45 +153,44 @@ export default function Show({ product }) {
         <GuestLayout title={product.name}>
             <Head title={`${product.name} - GR-DOU`} />
 
-            <div className="bg-slate-50 min-h-screen py-10 lg:py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white min-h-screen py-10 lg:py-16 relative overflow-hidden">
+                <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
                     
-                    {/* Breadcrumb */}
-                    <nav className="mb-8 flex items-center text-sm font-medium text-slate-500">
-                        <Link href="/" className="hover:text-blue-600 transition-colors">Beranda</Link>
-                        <span className="mx-2 text-slate-300">/</span>
-                        <Link href={route('katalog.index')} className="hover:text-blue-600 transition-colors">Katalog</Link> 
-                        <span className="mx-2 text-slate-300">/</span>
-                        <span className="text-slate-900 truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
+                    <nav className="mb-8 flex items-center text-sm font-semibold text-gray-500">
+                        <Link href="/" className="hover:text-[#277cdd] transition-colors">Beranda</Link>
+                        <span className="mx-3 text-gray-300">/</span>
+                        <Link href={route('katalog.index')} className="hover:text-[#277cdd] transition-colors">Katalog</Link> 
+                        <span className="mx-3 text-gray-300">/</span>
+                        <span className="text-gray-900 truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
                         
                         {isEditing && (
-                            <span className="ml-4 bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-md text-[10px] font-black tracking-wider uppercase border border-amber-200 shadow-sm animate-pulse">
+                            <span className="ml-4 bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-orange-200 shadow-sm animate-pulse">
                                 Mode Edit
                             </span>
                         )}
                     </nav>
 
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div className="bg-white rounded-[2rem] shadow-2xl shadow-[#277cdd]/5 border border-gray-100 overflow-hidden">
                         <div className="grid grid-cols-1 lg:grid-cols-12">
                             
-                            {/* --- KOLOM KIRI: GAMBAR PRODUK --- */}
-                            <div className="lg:col-span-5 p-6 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-100 bg-slate-50/50">
-                                <div className="sticky top-24 space-y-4">
-                                    {/* Main Image */}
-                                    <div className="rounded-2xl overflow-hidden border border-slate-200 bg-white aspect-[4/3] sm:aspect-square relative group shadow-sm">
+                            <div className="lg:col-span-5 p-6 sm:p-10 border-b lg:border-b-0 lg:border-r border-gray-100 bg-gray-50/50">
+                                <div className="sticky top-28 space-y-6">
+                                    <div className="rounded-3xl overflow-hidden border border-gray-200 bg-white aspect-square relative group shadow-sm">
                                         <img 
                                             src={mainImage} 
                                             alt={product.name} 
-                                            className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" 
-                                            onError={(e) => { e.target.src = "https://placehold.co/600x600/eeeeee/999999?text=Gambar+Produk"; }}
+                                            className="w-full h-full object-contain p-6 transition-transform duration-700 group-hover:scale-110" 
+                                            onError={(e) => { e.target.src = "https://placehold.co/600x600/f8fafc/94a3b8?text=Gambar+Produk"; }}
                                         />
                                     </div>
                                     
-                                    {/* Thumbnails Gallery */}
-                                    <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
+                                    <div className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                         <button 
                                             onClick={() => setMainImage(product.thumbnail)} 
-                                            className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${mainImage === product.thumbnail ? 'border-blue-500 shadow-md scale-105' : 'border-slate-200 hover:border-blue-300 opacity-70 hover:opacity-100'}`}
+                                            className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${mainImage === product.thumbnail ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
                                         >
                                             <img src={product.thumbnail} className="w-full h-full object-cover" />
                                         </button>
@@ -217,7 +199,7 @@ export default function Show({ product }) {
                                             <button 
                                                 key={idx} 
                                                 onClick={() => setMainImage(img)} 
-                                                className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${mainImage === img ? 'border-blue-500 shadow-md scale-105' : 'border-slate-200 hover:border-blue-300 opacity-70 hover:opacity-100'}`}
+                                                className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img ? 'border-[#277cdd] shadow-lg shadow-[#277cdd]/20 scale-105' : 'border-gray-200 hover:border-[#277cdd]/50 opacity-70 hover:opacity-100'}`}
                                             >
                                                 <img src={img} className="w-full h-full object-cover" />
                                             </button>
@@ -226,65 +208,60 @@ export default function Show({ product }) {
                                 </div>
                             </div>
 
-                            {/* --- KOLOM KANAN: DETAIL & FORM ORDER --- */}
-                            <div className="lg:col-span-7 p-6 lg:p-10 lg:pl-12">
+                            <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12">
                                 
-                                {/* Header Judul & Deskripsi */}
-                                <div className="mb-8">
-                                    <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
+                                <div className="mb-10">
+                                    <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 leading-tight tracking-tight">
                                         {product.name}
                                     </h1>
-                                    <p className="text-slate-500 text-sm sm:text-base leading-relaxed whitespace-pre-line font-medium">
+                                    <p className="text-gray-500 text-base leading-relaxed whitespace-pre-line font-medium">
                                         {product.description}
                                     </p>
                                 </div>
                                 
-                                {/* Panel Harga Premium */}
-                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100/50 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 shadow-sm">
+                                <div className="bg-[#277cdd]/5 p-6 sm:p-8 rounded-3xl border border-[#277cdd]/10 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 shadow-sm">
                                     <div>
-                                        <p className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-1.5 opacity-80">Harga Satuan</p>
-                                        <span className="text-2xl font-black text-blue-800">{formatIDR(unitPrice)}</span>
+                                        <p className="text-[11px] text-[#277cdd] font-bold uppercase tracking-widest mb-1">Harga Satuan</p>
+                                        <span className="text-3xl font-black text-[#277cdd]">{formatIDR(unitPrice)}</span>
                                         {Object.keys(selectedAddons).length > 0 && (
-                                            <p className="text-[10px] text-blue-500 font-semibold mt-1 bg-white/60 inline-block px-2 py-0.5 rounded-full">
+                                            <p className="text-[10px] text-[#277cdd] font-bold mt-2 bg-white px-3 py-1 rounded-full shadow-sm inline-block">
                                                 Termasuk biaya kustomisasi
                                             </p>
                                         )}
                                     </div>
-                                    <div className="hidden sm:block w-px h-12 bg-blue-200/50"></div>
+                                    <div className="hidden sm:block w-px h-16 bg-[#277cdd]/20"></div>
                                     <div className="text-left sm:text-right">
-                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1.5 opacity-80">Estimasi Total ({totalQty} pcs)</p>
-                                        <span className="text-3xl font-black text-slate-900">{formatIDR(unitPrice * totalQty)}</span>
+                                        <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-1">Estimasi Total ({totalQty} pcs)</p>
+                                        <span className="text-3xl font-black text-gray-900">{formatIDR(unitPrice * totalQty)}</span>
                                     </div>
                                 </div>
 
-                                {/* SECTION 1: UKURAN (Perbaikan Layout) */}
                                 {product.available_sizes && product.available_sizes.length > 0 && (
                                     <div className="mb-10">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                                <FaRulerCombined className="text-slate-400" /> Pilih Ukuran
+                                        <div className="flex items-center justify-between mb-5">
+                                            <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                                <FaRulerCombined className="text-gray-400" /> Pilih Ukuran
                                             </h3>
-                                            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
-                                                Total Qty: <span className="text-blue-600">{totalQty}</span>
+                                            <span className="text-xs font-bold text-gray-600 bg-gray-100 px-4 py-1.5 rounded-full border border-gray-200">
+                                                Total Qty: <span className="text-[#277cdd] text-sm ml-1">{totalQty}</span>
                                             </span>
                                         </div>
                                         
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                             {product.available_sizes.map((size) => (
                                                 <div 
                                                     key={size} 
-                                                    className={`relative flex flex-col items-center p-3 rounded-2xl border-2 transition-all duration-300 ${sizeQuantities[size] > 0 ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200'}`}
+                                                    className={`relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 ${sizeQuantities[size] > 0 ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
                                                 >
-                                                    <span className={`text-sm font-black mb-3 block ${sizeQuantities[size] > 0 ? 'text-blue-700' : 'text-slate-600'}`}>
+                                                    <span className={`text-base font-black mb-4 block ${sizeQuantities[size] > 0 ? 'text-[#277cdd]' : 'text-gray-700'}`}>
                                                         {size.toUpperCase()}
                                                     </span>
                                                     
-                                                    {/* Custom Input Number */}
-                                                    <div className="flex items-center justify-between w-full bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
+                                                    <div className="flex items-center justify-between w-full bg-white rounded-xl border border-gray-200 p-1.5 shadow-sm">
                                                         <button 
                                                             type="button"
                                                             onClick={() => handleSizeQtyChange(size, -1)} 
-                                                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${sizeQuantities[size] > 0 ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'text-slate-300 cursor-not-allowed'}`}
+                                                            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${sizeQuantities[size] > 0 ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'text-gray-300 cursor-not-allowed'}`}
                                                             disabled={!sizeQuantities[size]}
                                                         >
                                                             <FaMinus size={10} />
@@ -296,13 +273,13 @@ export default function Show({ product }) {
                                                             value={sizeQuantities[size] || ''} 
                                                             placeholder="0"
                                                             onChange={(e) => handleManualQtyChange(size, e.target.value)} 
-                                                            className="w-10 text-center text-sm font-bold bg-transparent border-none p-0 focus:ring-0 text-slate-900 placeholder:text-slate-300" 
+                                                            className="w-12 text-center text-sm font-bold bg-transparent border-none p-0 focus:ring-0 text-gray-900 placeholder:text-gray-300 [&::-webkit-inner-spin-button]:appearance-none" 
                                                         />
                                                         
                                                         <button 
                                                             type="button"
                                                             onClick={() => handleSizeQtyChange(size, 1)} 
-                                                            className="w-7 h-7 rounded-lg bg-slate-900 text-white hover:bg-slate-800 flex items-center justify-center transition-colors shadow-sm"
+                                                            className="w-8 h-8 rounded-lg bg-gray-900 text-white hover:bg-[#277cdd] flex items-center justify-center transition-colors shadow-sm"
                                                         >
                                                             <FaPlus size={10} />
                                                         </button>
@@ -313,14 +290,13 @@ export default function Show({ product }) {
                                     </div>
                                 )}
 
-                                {/* SECTION 2: ADD-ONS WAJIB */}
                                 {product.addons && product.addons.length > 0 && (
-                                    <div className="mb-10 space-y-5">
-                                        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                                            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                                <FaCheck className="text-slate-400" /> Kustomisasi
+                                    <div className="mb-10 space-y-6">
+                                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                            <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                                <FaCheck className="text-gray-400" /> Kustomisasi
                                             </h3>
-                                            <span className="text-[10px] text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded border border-red-100 uppercase tracking-wider">
+                                            <span className="text-[10px] text-red-500 font-bold bg-red-50 px-3 py-1 rounded-full border border-red-100 uppercase tracking-widest">
                                                 * Wajib Dipilih
                                             </span>
                                         </div>
@@ -328,23 +304,23 @@ export default function Show({ product }) {
                                         {product.addons.map((group, idx) => {
                                             const isGroupSelected = !!selectedAddons[group.title];
                                             return (
-                                                <div key={idx} className="space-y-3">
+                                                <div key={idx} className="space-y-4">
                                                     <div className="flex justify-between items-center">
-                                                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{group.title}</h4>
+                                                        <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{group.title}</h4>
                                                         {!isGroupSelected && <span className="text-[10px] text-red-500 font-bold animate-pulse">Pilih salah satu!</span>}
                                                     </div>
                                                     
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                         {group.options.map((option, optIdx) => {
                                                             const isSelected = selectedAddons[group.title]?.name === option.name;
                                                             return (
                                                                 <label 
                                                                     key={optIdx} 
-                                                                    className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200'}`}
+                                                                    className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${isSelected ? 'border-[#277cdd] bg-[#277cdd]/5 shadow-sm' : 'border-gray-200 bg-white hover:border-[#277cdd]/30'}`}
                                                                 >
                                                                     <div className="pt-0.5">
-                                                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-blue-600' : 'border-slate-300'}`}>
-                                                                            {isSelected && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
+                                                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-[#277cdd]' : 'border-gray-300'}`}>
+                                                                            {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#277cdd]"></div>}
                                                                         </div>
                                                                         <input 
                                                                             type="radio" 
@@ -355,10 +331,10 @@ export default function Show({ product }) {
                                                                         />
                                                                     </div>
                                                                     <div className="flex-1">
-                                                                        <span className={`block text-sm font-bold ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
+                                                                        <span className={`block text-sm font-bold ${isSelected ? 'text-[#277cdd]' : 'text-gray-900'}`}>
                                                                             {option.name}
                                                                         </span>
-                                                                        <span className={`block text-xs font-bold mt-1 ${option.price > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                                        <span className={`block text-xs font-bold mt-1.5 ${option.price > 0 ? 'text-emerald-500' : 'text-gray-400'}`}>
                                                                             {option.price > 0 ? `+ ${formatIDR(option.price)}` : 'Termasuk (Gratis)'}
                                                                         </span>
                                                                     </div>
@@ -372,35 +348,32 @@ export default function Show({ product }) {
                                     </div>
                                 )}
 
-                                {/* SECTION 3: UPLOAD DESAIN (MULTI FILE) */}
                                 <div className="mb-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                            <FaImage className="text-slate-400" /> Upload Desain
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                            <FaImage className="text-gray-400" /> Upload Desain
                                         </h3>
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${designFiles.length >= 5 ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                        <span className={`text-xs font-bold px-4 py-1.5 rounded-full border ${designFiles.length >= 5 ? 'bg-red-50 text-red-600 border-red-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                                             {designFiles.length} / 5 File
                                         </span>
                                     </div>
                                     
-                                    {/* List File yang sudah diupload */}
                                     {designFiles.length > 0 && (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                                             {designFiles.map((file, idx) => (
-                                                <div key={idx} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-sm group">
-                                                    <div className="flex items-center gap-3 overflow-hidden">
-                                                        <div className="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                            <FaImage size={16} />
+                                                <div key={idx} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl shadow-sm group">
+                                                    <div className="flex items-center gap-4 overflow-hidden">
+                                                        <div className="w-10 h-10 bg-blue-50 text-[#277cdd] rounded-xl flex items-center justify-center flex-shrink-0">
+                                                            <FaImage size={18} />
                                                         </div>
                                                         <div className="min-w-0 pr-2">
-                                                            <p className="text-sm font-bold text-slate-700 truncate">{file.name}</p>
-                                                            <p className="text-[10px] text-slate-400 font-medium">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                                            <p className="text-sm font-bold text-gray-700 truncate">{file.name}</p>
+                                                            <p className="text-[10px] text-gray-400 font-medium mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                                         </div>
                                                     </div>
                                                     <button 
                                                         onClick={() => removeFile(idx)} 
-                                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-500 rounded-lg transition-colors flex-shrink-0"
-                                                        title="Hapus file"
+                                                        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500 rounded-lg transition-colors flex-shrink-0"
                                                     >
                                                         <FaTrash size={12} />
                                                     </button>
@@ -409,9 +382,8 @@ export default function Show({ product }) {
                                         </div>
                                     )}
 
-                                    {/* Area Drop/Upload */}
                                     {designFiles.length < 5 && (
-                                        <div className="relative border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-slate-50/50 hover:bg-blue-50 hover:border-blue-400 transition-colors cursor-pointer group">
+                                        <div className="relative border-2 border-dashed border-gray-300 rounded-3xl p-10 text-center bg-gray-50/50 hover:bg-[#277cdd]/5 hover:border-[#277cdd]/40 transition-colors cursor-pointer group">
                                             <input 
                                                 type="file" 
                                                 multiple 
@@ -419,30 +391,29 @@ export default function Show({ product }) {
                                                 onChange={handleFileChange} 
                                             />
                                             <div className="flex flex-col items-center justify-center pointer-events-none">
-                                                <div className="w-12 h-12 bg-white shadow-sm rounded-full flex items-center justify-center text-slate-400 group-hover:text-blue-500 group-hover:scale-110 transition-all mb-3">
-                                                    <FaPlus size={16} />
+                                                <div className="w-14 h-14 bg-white shadow-sm rounded-full flex items-center justify-center text-gray-400 group-hover:text-[#277cdd] group-hover:scale-110 transition-all mb-4">
+                                                    <FaPlus size={18} />
                                                 </div>
-                                                <span className="text-slate-700 font-bold text-sm">Klik atau Seret file desain kesini</span>
-                                                <span className="text-xs text-slate-400 mt-1 font-medium">Maksimal 5 file. Format bebas (PNG, JPG, PDF, Corel).</span>
+                                                <span className="text-gray-900 font-bold text-sm">Klik atau seret file desain ke sini</span>
+                                                <span className="text-xs text-gray-400 mt-2 font-medium">Maksimal 5 file. Format bebas (PNG, JPG, PDF, Corel).</span>
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* --- ACTION BUTTONS --- */}
-                                <div className="pt-6 border-t border-slate-200">
+                                <div className="pt-8 border-t border-gray-100">
                                     <button 
                                         onClick={handleAddToCart}
                                         disabled={totalQty === 0}
-                                        className={`w-full font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-xl
+                                        className={`w-full font-extrabold py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-300 
                                             ${totalQty > 0 
                                                 ? (isEditing 
-                                                    ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30 hover:-translate-y-1' 
-                                                    : 'bg-[#277cdd] hover:bg-blue-700 text-white shadow-[#277cdd]/30 hover:-translate-y-1') 
-                                                : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'}`}
+                                                    ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 hover:-translate-y-1' 
+                                                    : 'bg-[#277cdd] hover:bg-[#1f63b3] text-white shadow-lg shadow-[#277cdd]/30 hover:-translate-y-1') 
+                                                : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200 shadow-none'}`}
                                     >
-                                        {isEditing ? <FaSave size={18} /> : <FaShoppingCart size={18} />} 
-                                        <span className="tracking-wide uppercase text-sm">
+                                        {isEditing ? <FaSave size={20} /> : <FaShoppingCart size={20} />} 
+                                        <span className="tracking-widest uppercase text-sm">
                                             {isEditing ? 'Simpan Perubahan' : 'Masukkan Keranjang'}
                                         </span>
                                     </button>
@@ -450,7 +421,7 @@ export default function Show({ product }) {
                                     {isEditing && (
                                         <button 
                                             onClick={handleCancelEdit} 
-                                            className="w-full mt-4 text-slate-500 text-sm font-bold hover:text-slate-800 transition-colors flex items-center justify-center"
+                                            className="w-full mt-5 text-gray-400 text-sm font-bold hover:text-gray-700 transition-colors flex items-center justify-center"
                                         >
                                             Batalkan Edit & Kembali ke Keranjang
                                         </button>
@@ -462,11 +433,6 @@ export default function Show({ product }) {
                     </div>
                 </div>
             </div>
-
-            <style jsx>{`
-                .hide-scrollbar::-webkit-scrollbar { display: none; }
-                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
         </GuestLayout>
     );
 }

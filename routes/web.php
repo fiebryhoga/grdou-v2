@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\CatalogController;
+use App\Http\Controllers\Admin\WebsiteConfigController;
+use App\Models\AboutConfig;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,6 +23,12 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog.index');
 Route::get('/katalog/{id}', [CatalogController::class, 'show'])->name('katalog.show');
 Route::redirect('/produk', '/katalog');
+
+Route::get('/tentang-kami', function () {
+    return Inertia::render('Customer/About', [
+        'about_config' => AboutConfig::first() // Kirim data config ke frontend
+    ]);
+})->name('tentang.index');
 
 // Keranjang
 Route::get('/keranjang', function () {
@@ -66,6 +74,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
+    Route::get('/konfigurasi', [WebsiteConfigController::class, 'edit'])->name('admin.config.edit');
+    Route::post('/konfigurasi', [WebsiteConfigController::class, 'update'])->name('admin.config.update');
 
 
     // Masukkan ini di dalam grup middleware admin

@@ -1,133 +1,133 @@
 import React from "react";
-import { FaQuoteRight, FaStar } from "react-icons/fa";
+import { FaStar, FaQuoteLeft } from "react-icons/fa";
 
 const TestimonialSection = ({ testimonials = [] }) => {
-    // --- DATA DUMMY (FALLBACK) ---
-    // Digunakan jika data dari database kosong
-    const dummyTestimonials = [
-        {
-            id: 1,
-            nama: "Bima Arya",
-            perusahaan: "Ketua Panitia Event Kampus",
-            pesan: "Luar biasa! Sablon kaos panitia kami selesai tepat waktu meskipun pesanan mepet. Kualitas plastisolnya tebal dan warnanya sangat solid. Recommended banget buat anak kampus!",
-            foto: "https://i.pravatar.cc/150?img=11",
-            rating: 5
-        },
-        {
-            id: 2,
-            nama: "Sarah Nabila",
-            perusahaan: "Founder Brand Local",
-            pesan: "Sebagai owner clothing line, saya sangat perfeksionis soal jahitan dan bahan. GR-DOU berhasil memenuhi standar saya. Cuttingannya rapi dan bahan katunnya premium. Bakal langganan terus!",
-            foto: "https://i.pravatar.cc/150?img=5",
-            rating: 5
-        },
-        {
-            id: 3,
-            nama: "Andi Pratama",
-            perusahaan: "HRD PT. Maju Bersama",
-            pesan: "Kami memesan seragam kemeja PDH untuk 50 karyawan. Bordir komputernya sangat detail dan presisi. Timnya juga komunikatif saat proses revisi desain. Terima kasih GR-DOU!",
-            foto: "https://i.pravatar.cc/150?img=68",
-            rating: 5
-        }
-    ];
-
-    // Gunakan data props jika ada, jika tidak gunakan dummy
-    const displayData = testimonials.length > 0 ? testimonials : dummyTestimonials;
-
-    // Helper untuk render bintang
     const renderStars = (rating) => {
-        const stars = [];
-        for (let i = 0; i < 5; i++) {
-            stars.push(
-                <FaStar 
-                    key={i} 
-                    size={16} 
-                    className={i < (rating || 5) ? "text-amber-400" : "text-slate-200"} 
-                />
-            );
-        }
-        return stars;
+        return [...Array(5)].map((_, index) => (
+            <FaStar
+                key={index}
+                size={16}
+                className={index < rating ? "text-yellow-400" : "text-gray-200"}
+            />
+        ));
     };
 
-    return (
-        <section className="py-24 bg-slate-50 relative overflow-hidden" id="testimonial">
-            
-            {/* --- Dekorasi Background --- */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
-                <div className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-slate-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
-            </div>
+    if (!testimonials || testimonials.length === 0) return null;
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                
-                {/* --- Judul Section --- */}
-                <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-[#277cdd] font-bold tracking-wider uppercase text-xs sm:text-sm bg-blue-100 px-4 py-1.5 rounded-full inline-block mb-4">
+    let safeItems = [...testimonials];
+    while (safeItems.length < 5) {
+        safeItems = [...safeItems, ...testimonials];
+    }
+
+    return (
+        <section className="py-24 bg-white relative overflow-hidden" id="testimonial">
+            <style>
+                {`
+                @keyframes scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-100% - 2rem)); }
+                }
+                .animate-scroll {
+                    animation: scroll 40s linear infinite;
+                }
+                .group:hover .animate-scroll {
+                    animation-play-state: paused;
+                }
+                `}
+            </style>
+
+            <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-[#277cdd]/5 rounded-full blur-3xl z-0 pointer-events-none"></div>
+
+            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 mb-12">
+                <div className="text-center max-w-2xl mx-auto">
+                    <span className="text-[#277cdd] font-bold tracking-widest uppercase text-xs bg-[#277cdd]/10 px-4 py-2 rounded-full inline-block mb-4">
                         Testimoni Pelanggan
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
-                        Apa Kata <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#277cdd] to-blue-500">Mereka?</span>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-5 leading-tight tracking-tight">
+                        Apa Kata <span className="text-[#277cdd]">Mereka?</span>
                     </h2>
-                    <p className="text-slate-600 text-base md:text-lg">
-                        Kepercayaan pelanggan adalah kebanggaan kami. Lihat pengalaman mereka yang telah mempercayakan produksi pakaiannya kepada kami.
+                    <p className="text-gray-500 text-base leading-relaxed">
+                        Kepercayaan dan kepuasan pelanggan adalah prioritas utama kami. Berikut adalah pengalaman mereka yang telah menggunakan jasa kami.
                     </p>
                 </div>
+            </div>
 
-                {/* --- Grid Testimonial --- */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayData.slice(0, 3).map((item, index) => (
-                        <div 
-                            key={item.id || index}
-                            className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 transform hover:-translate-y-2 relative group flex flex-col"
-                        >
-                            {/* Ikon Quote (Watermark di belakang) */}
-                            <FaQuoteRight className="absolute top-8 right-8 text-slate-50 text-6xl group-hover:text-blue-50 transition-colors duration-300 -z-0" />
+            <div className="relative w-full max-w-[1600px] mx-auto overflow-hidden group py-4">
+                <div className="absolute top-0 bottom-0 left-0 w-24 md:w-48 z-20 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                <div className="absolute top-0 bottom-0 right-0 w-24 md:w-48 z-20 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
 
-                            {/* Bintang Rating */}
-                            <div className="flex gap-1 mb-6 relative z-10">
-                                {renderStars(item.rating)}
-                            </div>
+                <div className="flex gap-8 w-max">
+                    <div className="flex gap-8 animate-scroll min-w-max">
+                        {safeItems.map((item, idx) => (
+                            <div 
+                                key={`first-${item.id || idx}-${idx}`}
+                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
+                            >
+                                <FaQuoteLeft className="absolute top-8 right-8 text-blue-50" size={40} />
+                                
+                                <div className="flex gap-1 mb-6 relative z-10">
+                                    {renderStars(item.rating || 5)}
+                                </div>
 
-                            {/* Teks Pesan */}
-                            <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8 flex-grow relative z-10 font-medium italic">
-                                "{item.pesan}"
-                            </p>
+                                <p className="text-gray-600 text-sm leading-relaxed mb-8 flex-grow relative z-10 italic">
+                                    "{item.testimoni}"
+                                </p>
 
-                            {/* Profil Pelanggan */}
-                            <div className="flex items-center gap-4 mt-auto border-t border-slate-50 pt-6 relative z-10">
-                                {/* Avatar */}
-                                <div className="relative">
-                                    {item.foto ? (
-                                        <img 
-                                            src={item.foto} 
-                                            alt={item.nama} 
-                                            className="w-12 h-12 rounded-full object-cover ring-2 ring-blue-100"
-                                            onError={(e) => {
-                                                e.target.onerror = null; 
-                                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=277cdd&color=fff`;
-                                            }}
-                                        />
-                                    ) : (
-                                        <div className="w-12 h-12 rounded-full bg-[#277cdd] text-white flex items-center justify-center font-bold ring-2 ring-blue-100">
-                                            {item.nama?.charAt(0) || "U"}
-                                        </div>
-                                    )}
-                                    {/* Indikator Verified */}
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
-                                        <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                                <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-100 relative z-10">
+                                    <img 
+                                        src={item.foto ? `/storage/${item.foto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=277cdd&color=fff`} 
+                                        alt={item.nama}
+                                        className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-50"
+                                    />
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-base line-clamp-1">
+                                            {item.nama}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 font-medium mt-0.5 line-clamp-1">
+                                            {item.jabatan}
+                                        </p>
                                     </div>
                                 </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="flex gap-8 animate-scroll min-w-max" aria-hidden="true">
+                        {safeItems.map((item, idx) => (
+                            <div 
+                                key={`second-${item.id || idx}-${idx}`}
+                                className="w-[320px] sm:w-[400px] bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:border-[#277cdd]/30 transition-colors duration-300 flex flex-col relative whitespace-normal"
+                            >
+                                <FaQuoteLeft className="absolute top-8 right-8 text-blue-50" size={40} />
                                 
-                                {/* Info Nama & Perusahaan */}
-                                <div>
-                                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">{item.nama}</h4>
-                                    <p className="text-xs sm:text-sm text-slate-500 font-medium">{item.perusahaan || "Pelanggan Setia"}</p>
+                                <div className="flex gap-1 mb-6 relative z-10">
+                                    {renderStars(item.rating || 5)}
+                                </div>
+
+                                <p className="text-gray-600 text-sm leading-relaxed mb-8 flex-grow relative z-10 italic">
+                                    "{item.testimoni}"
+                                </p>
+
+                                <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-100 relative z-10">
+                                    <img 
+                                        src={item.foto ? `/storage/${item.foto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=277cdd&color=fff`} 
+                                        alt={item.nama}
+                                        className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-50"
+                                    />
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-base line-clamp-1">
+                                            {item.nama}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 font-medium mt-0.5 line-clamp-1">
+                                            {item.jabatan}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-
             </div>
         </section>
     );
