@@ -79,7 +79,7 @@ const KeunggulanSection = ({ keunggulans = [] }) => {
                     {displayData.map((item, index) => (
                         <div 
                             key={item.id || index}
-                            className="group relative p-8 rounded-lg bg-white border border-gray-100 hover:border-[#277cdd]/30 hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-500 overflow-hidden"
+                            className="group relative p-8 rounded-lg bg-white border border-gray-100 hover:border-[#277cdd]/30 shadow-2xl hover:shadow-2xl hover:shadow-[#277cdd]/5 transition-all duration-500 overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-blue-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 

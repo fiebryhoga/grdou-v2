@@ -4,19 +4,25 @@ import { usePage } from "@inertiajs/react";
 const Hero = () => {
     const { website_config } = usePage().props;
 
+    // Format nomor WhatsApp (hapus karakter selain angka)
     const waNumber = website_config?.whatsapp ? website_config.whatsapp.replace(/\D/g, "") : "";
     const waMessage = "Halo, saya ingin konsultasi pesanan sablon/konveksi.";
     const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
 
-    const keunggulanList = website_config?.keunggulan 
-        ? website_config.keunggulan.split('\n').filter(item => item.trim() !== '') 
-        : [];
+    // Mengambil data keunggulan dari kolom-kolom yang terpisah
+    const keunggulanList = [
+        website_config?.keunggulan_1_title,
+        website_config?.keunggulan_2_title,
+        website_config?.keunggulan_3_title,
+        website_config?.keunggulan_4_title,
+    ].filter(item => item && item.trim() !== ''); // Hanya tampilkan yang tidak kosong
 
+    // Mengambil gambar klien
     const clientImages = [
         website_config?.client_image_1,
         website_config?.client_image_2,
         website_config?.client_image_3,
-    ].filter(Boolean);
+    ].filter(Boolean); // Hanya ambil yang memiliki value (tidak null)
 
     const CheckIcon = () => (
         <svg
@@ -41,6 +47,8 @@ const Hero = () => {
                 <div className="w-full flex flex-col md:flex-row items-center py-12 md:py-20 gap-10">
                     
                     <div className="w-full md:w-6/12 flex flex-col justify-center items-start text-left">
+
+                        {/* bagian h1 ini gausah diganti atau disambungkan apapun */}
                         <h1 className="font-extrabold text-4xl lg:text-5xl text-gray-900 leading-tight">
                             Wujudkan setiap
                             <span className="text-blue-600 relative inline-block mx-2">
@@ -55,16 +63,18 @@ const Hero = () => {
                             sepenuhnya.
                         </h1>
 
+                        {/* Deskripsi terhubung ke DB */}
                         <p className="mt-6 text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg">
                             {website_config?.description}
                         </p>
 
+                        {/* List Keunggulan terhubung ke DB */}
                         <div className="mt-8 space-y-3">
                             {keunggulanList.map((item, index) => (
                                 <div key={index} className="flex items-center">
                                     <CheckIcon />
                                     <span className="text-gray-800 font-semibold text-sm sm:text-base">
-                                        {item.replace(/^\d+[\.\)]\s*/, '')}
+                                        {item}
                                     </span>
                                 </div>
                             ))}
@@ -80,6 +90,7 @@ const Hero = () => {
                                 Pesan Sekarang
                             </a>
                             
+                            {/* Gambar Client terhubung ke DB */}
                             {clientImages.length > 0 && (
                                 <div className="flex items-center gap-3">
                                     <div className="flex -space-x-3">

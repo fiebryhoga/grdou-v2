@@ -6,7 +6,8 @@ import {
     Users, 
     ShoppingCart, 
     Settings,
-    LayoutTemplate
+    LayoutTemplate,
+    TrendingUp // <-- 1. Import icon baru untuk laporan
 } from 'lucide-react';
 
 export default function Sidebar({ isSidebarOpen }) {
@@ -29,6 +30,13 @@ export default function Sidebar({ isSidebarOpen }) {
             href: route('admin.product.index'), 
             icon: Shirt, 
             active: route().current('admin.product.*') 
+        },
+        // <-- 2. Tambahkan menu Laporan di sini
+        { 
+            name: 'Laporan Penjualan', 
+            href: route('admin.reports.index'), 
+            icon: TrendingUp, 
+            active: route().current('admin.reports.*') 
         },
     ];
 

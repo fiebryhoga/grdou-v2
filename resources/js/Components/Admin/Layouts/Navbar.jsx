@@ -48,7 +48,7 @@ export default function Navbar({ user, isSidebarOpen, setIsSidebarOpen, header }
 
             <div className="flex items-center gap-3 sm:gap-5 relative z-10">
                 
-                <div className="relative" ref={notifRef}>
+                {/* <div className="relative" ref={notifRef}>
                     <button 
                         type="button"
                         onClick={() => setNotifOpen(!notifOpen)}
@@ -72,7 +72,7 @@ export default function Navbar({ user, isSidebarOpen, setIsSidebarOpen, header }
                             <NotificationActivity notifications={notifications} />
                         </div>
                     )}
-                </div>
+                </div> */}
 
                 <div className="h-10 w-[1px] bg-slate-200 mx-1 hidden sm:block"></div>
 

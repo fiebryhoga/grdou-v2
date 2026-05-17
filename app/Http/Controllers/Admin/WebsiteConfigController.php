@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\WebsiteConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache; // Pastikan ini diimport
 use Inertia\Inertia;
 
 class WebsiteConfigController extends Controller
@@ -68,7 +69,12 @@ class WebsiteConfigController extends Controller
             }
         }
 
+        // Update data ke database
         $config->update($validated);
+
+        // HAPUS CACHE AGAR DATA FRONTEND SINKRON
+        // Ini akan memaksa HandleInertiaRequests mengambil data terbaru dari DB
+        Cache::forget('website_config');
 
         return redirect()->back()->with('success', 'Konfigurasi website berhasil diperbarui!');
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\CatalogController;
 use App\Http\Controllers\Admin\WebsiteConfigController;
 use App\Http\Controllers\Admin\AboutConfigController;
+use App\Http\Controllers\Admin\ReportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('manage-admin', ManageAdminController::class)
+        ->parameters(['manage-admin' => 'user']) // <-- Tambahkan baris ini
         ->names('admin.manage')
         ->except(['create', 'show', 'edit']);
 
@@ -80,6 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
     Route::patch('/orders/{id}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.update-status');
+
+    Route::get('/laporan', [ReportController::class, 'index'])->name('admin.reports.index');
+
+    Route::get('/laporan/download', [ReportController::class, 'downloadPdf'])->name('admin.reports.download');
 });
 
 /*
