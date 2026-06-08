@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { 
     LayoutDashboard, 
     Shirt, 
@@ -11,6 +11,11 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar({ isSidebarOpen }) {
+    const { website_config } = usePage().props;
+    const titleParts = website_config?.title ? website_config.title.split(' ') : ['GR-DOU'];
+    const brandFirst = titleParts[0];
+    const brandRest = titleParts.slice(1).join(' ');
+
     // Membagi menu menjadi 2 grup agar lebih rapi
     const menuUtama = [
         { 
@@ -114,7 +119,7 @@ export default function Sidebar({ isSidebarOpen }) {
                     </div>
                     <div>
                         <h1 className="font-black text-xl tracking-tight text-slate-900 leading-none mb-1">
-                            GR<span className="text-[#277cdd]">-</span>DOU
+                            {brandFirst}<span className="text-[#277cdd]"> {brandRest}</span>
                         </h1>
                         <p className="text-[10px] font-bold text-slate-400 capitalize tracking-widest">
                             Admin Panel
@@ -157,7 +162,7 @@ export default function Sidebar({ isSidebarOpen }) {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
                     <p className="text-[11px] text-slate-500 capitalize tracking-widest font-black">
-                        GR-DOU System
+                        {website_config?.title || 'GR-DOU System'}
                     </p>
                     <p className="text-[10px] font-bold text-slate-400 mt-1">
                         Version 2.0.0

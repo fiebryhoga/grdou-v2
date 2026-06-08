@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
 
 export default function Login({ status, canResetPassword }) {
+    const { website_config } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,7 +25,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-            <Head title="Admin Login | GR-DOU" />
+            <Head title={`Admin Login | ${website_config?.title || 'GR-DOU'}`} />
 
             {/* --- ANIMATED MESH BACKGROUND --- */}
             <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -59,7 +60,7 @@ export default function Login({ status, canResetPassword }) {
                             Welcome Back
                         </h2>
                         <p className="text-sm text-slate-500 font-medium">
-                            Silakan masuk untuk mengelola sistem <span className="font-bold text-[#277cdd]">GR-DOU</span>.
+                            Silakan masuk untuk mengelola sistem <span className="font-bold text-[#277cdd]">{website_config?.title || 'GR-DOU'}</span>.
                         </p>
                     </div>
 
@@ -166,7 +167,7 @@ export default function Login({ status, canResetPassword }) {
                 {/* Footer Copy */}
                 <div className="text-center mt-8">
                     <p className="text-[11px] font-bold text-slate-400 capitalize tracking-widest">
-                        &copy; {new Date().getFullYear()} GR-DOU System
+                        &copy; {new Date().getFullYear()} {website_config?.title || 'GR-DOU System'}
                     </p>
                 </div>
             </div>

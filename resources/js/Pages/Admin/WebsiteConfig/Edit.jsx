@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm, Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Globe, Mail, AlignLeft, Phone, Instagram, Facebook, Image as ImageIcon, Save, CheckCircle } from 'lucide-react';
+import { Globe, Mail, AlignLeft, Phone, Instagram, Facebook, Youtube, MapPin, Image as ImageIcon, Save, CheckCircle } from 'lucide-react';
 
 export default function Edit({ auth, config }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -158,10 +158,27 @@ export default function Edit({ auth, config }) {
                             Kontak & Sosial Media
                         </h3>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-600 mb-2">Alamat Lengkap (Untuk Google Maps)</label>
+                                <div className="relative group">
+                                    <div className="absolute top-3.5 left-3.5 pointer-events-none">
+                                        <MapPin className="text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                                    </div>
+                                    <textarea
+                                        value={data.address}
+                                        onChange={e => setData('address', e.target.value)}
+                                        rows="3"
+                                        className="block w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-medium placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
+                                        placeholder="Jl. Contoh Alamat No. 123..."
+                                    ></textarea>
+                                </div>
+                                <p className="mt-1 text-xs text-slate-500">Alamat ini akan ditampilkan di Footer dan digunakan untuk embed Google Maps.</p>
+                            </div>
+                            
                             <div>
                                 <label className="block text-sm font-semibold text-slate-600 mb-2">Nomor WhatsApp</label>
-                                <div className="relative group">
+                                <div className="relative group mb-6">
                                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <Phone className="text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
                                     </div>
@@ -203,6 +220,22 @@ export default function Edit({ auth, config }) {
                                         onChange={e => setData('facebook', e.target.value)}
                                         className="block w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-medium placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
                                         placeholder="https://facebook.com/..."
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-600 mb-2">Tautan YouTube</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                        <Youtube className="text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={data.youtube}
+                                        onChange={e => setData('youtube', e.target.value)}
+                                        className="block w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-medium placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
+                                        placeholder="https://youtube.com/..."
                                     />
                                 </div>
                             </div>
